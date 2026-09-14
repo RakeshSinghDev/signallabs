@@ -1,0 +1,21 @@
+{
+  "name": "signallabs",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n \"server,client\" -c \"blue,green\" \"npm run server\" \"npm run client\"",
+    "client": "npm run dev --workspace=client",
+    "server": "npm run dev --workspace=server",
+    "build": "npm run build --workspace=server && npm run build --workspace=client",
+    "build:client": "npm run build --workspace=client",
+    "build:server": "npm run build --workspace=server"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  }
+}
