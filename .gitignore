@@ -7,3 +7,4 @@ dist/
 *.log
 .DS_Store
 "@ | Out-File -Encoding utf8 .gitignoreclient/tsconfig.tsbuildinfo
+client/tsconfig.tsbuildinfo
