@@ -6,7 +6,7 @@ SignalLab is a research workflow application that converts an intuitive market h
 
 The platform guides the user through five stages:
 
-```text
+
 ASK → CLARIFY → DEFINE → TEST → LEARN
 
 1. Problem
@@ -558,7 +558,7 @@ SignalLab — Research prototype complete.
 
 Don't leave that file vague. Put this in it:
 
-```markdown
+markdown
 # AI Usage — SignalLab
 
 AI tools were used as development assistants during the construction of SignalLab.
