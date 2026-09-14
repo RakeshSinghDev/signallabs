@@ -129,10 +129,13 @@ export function runExperimentService(req: ExperimentRunRequest): ExperimentRunRe
 
   const minReturn = Math.min(...netReturns);
 
-  const evidenceLevel = (avgNet > 0.4 && winRate >= 52) ? 'Moderate Evidence' : 'Weak Evidence';
-  const conclusion = evidenceLevel === 'Moderate Evidence'
-    ? 'There is historical evidence supporting the hypothesis under the selected assumptions in this prototype dataset, but the evidence is not sufficient to establish a robust standalone trading strategy.'
-    : 'The historical evidence in this prototype dataset is insufficient or weak under the selected parameters to support the hypothesis.';
+  const pValueNum = typeof pVal === 'number' ? pVal : parseFloat(String(pVal));
+  const isSignificant = !isNaN(pValueNum) && pValueNum < 0.05;
+  const evidenceLevel = isSignificant ? 'Statistically Significant (p < 0.05)' : 'Not Statistically Significant (p ≥ 0.05)';
+  const formattedNet = (avgNet >= 0 ? '+' : '') + avgNet + '%';
+  const conclusion = isSignificant
+    ? `The observed return (${formattedNet}) across ${sampleSize} events is statistically significant at the 5% level (p = ${pVal}, t = ${tStat}).`
+    : `The observed average net return (${formattedNet}) across ${sampleSize} events is not statistically significant at the 5% level (p = ${pVal}, t = ${tStat}). A positive average return does not prove the hypothesis.`;
 
   const resultsPayload = {
     sampleSize,

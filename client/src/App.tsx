@@ -13,9 +13,9 @@ const WorkspaceContent: React.FC = () => {
   const { currentPhase } = useExperiment();
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface font-sans text-on-surface">
+    <div className="min-h-screen flex flex-col bg-[#CBD6E6] font-sans text-[#111111]">
       <Header />
-      <main className="w-full pt-20 bg-surface min-h-[calc(100vh-2.5rem)] flex-1 pb-12">
+      <main className="w-full pt-20 bg-[#CBD6E6] min-h-[calc(100vh-2.5rem)] flex-1 pb-16">
         {currentPhase === 'ask' && <ResearchHome />}
         {currentPhase === 'clarify' && <ClarifyAmbiguity />}
         {currentPhase === 'define' && <DefineExperiment />}

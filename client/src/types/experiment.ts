@@ -83,7 +83,7 @@ export interface ExperimentResults {
   sharpeRatio?: number;
   distributionBins: DistributionBin[];
   regimes?: MarketRegimesBreakdown;
-  evidenceLevel?: 'Moderate Evidence' | 'Weak Evidence';
+  evidenceLevel?: 'Moderate Evidence' | 'Weak Evidence' | 'Preliminary Sample' | string;
   conclusion?: string;
 }
 

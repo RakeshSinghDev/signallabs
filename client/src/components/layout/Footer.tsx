@@ -2,24 +2,21 @@ import React from 'react';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="w-full h-10 bg-surface-container-lowest shadow-[0_-1px_8px_rgba(0,0,0,0.03)] border-t border-outline-variant/30 fixed bottom-0 left-0 right-0 z-40">
-      <div className="w-full h-full px-margin flex items-center justify-between text-on-surface-variant font-label-code text-label-code">
-        <div className="flex items-center gap-space-md truncate max-w-4xl">
-          <span className="font-label-caps text-label-caps px-space-xs py-0.5 bg-surface-container text-on-surface uppercase rounded-DEFAULT shrink-0 font-semibold">
-            COMPLIANCE
-          </span>
-          <span className="truncate font-body-sm text-body-sm text-on-surface-variant">
-            SignalLab is a statistical hypothesis testing &amp; research platform. Historical performance analysis is for empirical research purposes only and does not constitute investment advice.
+    <footer className="w-full h-11 bg-white border-t border-[#E5EAF1] fixed bottom-0 left-0 right-0 z-40">
+      <div className="w-full max-w-7xl mx-auto h-full px-4 sm:px-6 flex items-center justify-between text-xs text-[#667085]">
+        <div className="flex items-center gap-2 truncate max-w-2xl">
+          <span className="font-semibold text-[#111111]">SignalLab</span>
+          <span>•</span>
+          <span className="truncate">
+            Statistical hypothesis testing &amp; research prototype. Historical analysis for educational exploration only.
           </span>
         </div>
-        <div className="flex items-center gap-space-lg shrink-0">
-          <div className="flex items-center gap-space-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
-            <span>Engine: v2.4 (Deterministic)</span>
+        <div className="flex items-center gap-4 shrink-0">
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-[#08B878]"></span>
+            <span className="text-[#111111] font-medium">Dataset: NIFTY 50 (2018–2025)</span>
           </div>
-          <span className="font-label-caps text-label-caps px-space-xs py-0.5 bg-surface-container text-on-surface-variant uppercase rounded-DEFAULT font-semibold">
-            PROTOTYPE SAMPLE DATASET
-          </span>
+          <span className="text-[#667085] hidden sm:inline">1,849 sessions analyzed</span>
         </div>
       </div>
     </footer>

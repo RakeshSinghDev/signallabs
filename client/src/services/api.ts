@@ -67,7 +67,7 @@ export interface BackendExperimentResponse {
     heightPct: number;
     isPositive: boolean;
   }[];
-  evidenceLevel: 'Moderate Evidence' | 'Weak Evidence';
+  evidenceLevel: string;
   conclusion: string;
   kurtosis?: number;
   skewness?: number;

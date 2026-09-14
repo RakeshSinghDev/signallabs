@@ -100,13 +100,13 @@ export const CANONICAL_AUDIT_LOGS: AuditLogEvent[] = [
 export const INITIAL_CANONICAL_EXPERIMENT: ResearchExperiment = {
   id: 'EXP-2025-0842',
   specHash: '0x9b4a17ef',
-  title: 'NIFTY Mean Reversion',
+  title: 'Does buying NIFTY after a sharp fall work?',
   originalQuestion: 'Does buying NIFTY after a sharp fall work?',
   status: 'draft',
   market: 'NIFTY 50',
-  datasetName: 'Prototype Sample Dataset (NIFTY 50 TR 2018–2025)',
+  datasetName: 'Prototype Historical Dataset (NIFTY 50 2018–2025)',
   dataPeriod: '2018-01-01 → 2025-01-31',
-  totalTradingSessions: 1748,
+  totalTradingSessions: 1849,
   // Single Canonical Experiment State
   threshold: 0.05,
   thresholdConfirmed: false,
@@ -139,24 +139,24 @@ export const INITIAL_CANONICAL_EXPERIMENT: ResearchExperiment = {
         {
           id: 'A',
           label: '3% decline in 1 trading day',
-          description: 'Frequent shock threshold; captures mild risk-off pullbacks.',
-          meta: 'FREQ: ~18.4 / YR',
-          sampleCount: 'N=4,120'
+          description: 'Frequent shock threshold; captures moderate market pullbacks.',
+          meta: 'SENSITIVITY OPTION',
+          sampleCount: '24 events in sample'
         },
         {
           id: 'B',
           label: '5% decline in 1 trading day',
-          description: 'Extreme event regime; prototype sample includes 1,842 qualifying observations.',
-          meta: 'FREQ: ~4.1 / YR',
+          description: 'Larger one-day drop; captures rare liquidation events in the historical dataset.',
+          meta: 'BASELINE PRESET',
           isAiSuggested: true,
-          sampleCount: 'N=1,842'
+          sampleCount: '16 events in sample'
         },
         {
           id: 'C',
           label: '5% decline over 3 trading days',
-          description: 'Multi-day cascading distribution; tests trend exhaustion.',
-          meta: 'FREQ: ~7.6 / YR',
-          sampleCount: 'N=2,410'
+          description: 'Multi-day decline; tests whether spreading the drop across multiple days changes the outcome.',
+          meta: 'MULTI-DAY RULE',
+          sampleCount: 'Multi-day drop'
         },
         {
           id: 'D',
@@ -181,13 +181,13 @@ export const INITIAL_CANONICAL_EXPERIMENT: ResearchExperiment = {
           id: 'A',
           label: 'Same-day market close (15:25 - 15:30 IST)',
           description: 'Requires continuous intraday monitoring; sensitive to closing auction slippage.',
-          meta: 'RISK: LOOKAHEAD SLIPPAGE'
+          meta: 'SAME-DAY CLOSE'
         },
         {
           id: 'B',
           label: 'Next market session open (T+1 at 09:15 IST)',
           description: "Next-session execution rule. Uses the following trading session's open price.",
-          meta: 'ZERO LOOKAHEAD BIAS',
+          meta: 'NEXT-SESSION OPEN',
           isAiSuggested: true
         },
         {
@@ -225,7 +225,7 @@ export const INITIAL_CANONICAL_EXPERIMENT: ResearchExperiment = {
           id: '5',
           label: '5 trading days',
           description: 'Weekly mean reversion cycle apex.',
-          meta: 'AI SUGGESTED APEX',
+          meta: 'DEFAULT 5-DAY',
           isAiSuggested: true
         },
         {
@@ -251,12 +251,12 @@ export const INITIAL_CANONICAL_EXPERIMENT: ResearchExperiment = {
       confirmedValue: '2018-01-01 → 2025-01-31 (7 Years) · 0.10% Round-trip Cost',
       selectedOptionId: 'default',
       isConfirmed: true,
-      statisticalRationale: 'Provides a robust multi-regime sample spanning the COVID-19 liquidity shock, post-pandemic expansion, 2022 inflationary tightening, and 2024 all-time-high trends.',
+      statisticalRationale: 'Provides a multi-regime sample spanning the COVID-19 liquidity shock, post-pandemic expansion, 2022 inflationary tightening, and 2024 trends.',
       options: [
         {
           id: 'default',
-          label: '2018-01-01 → 2025-01-31 (Deterministic Prototype Dataset) · 0.10% Friction',
-          description: 'Adjusted for splits, dividends, STT, and exchange fees.',
+          label: '2018-01-01 → 2025-01-31 (Prototype Dataset · 1,849 Daily Sessions) · 0.10% Friction',
+          description: 'Daily index prices with estimated round-trip brokerage and taxes deducted.',
           meta: 'CONFIRMED DEFAULT',
           isAiSuggested: true
         }
@@ -264,22 +264,22 @@ export const INITIAL_CANONICAL_EXPERIMENT: ResearchExperiment = {
     }
   },
   results: {
-    sampleSize: 1842,
-    averageGrossReturn: 0.74,
-    medianReturn: 0.31,
-    winRate: 56.8,
-    winningTrades: 1046,
-    losingTrades: 796,
-    averageNetReturn: 0.52,
-    evidenceLevel: 'Moderate Evidence',
-    conclusion: 'There is historical evidence supporting the hypothesis under the selected assumptions, but the evidence is not sufficient to establish a robust standalone trading strategy.',
-    pValue: '< 0.001',
-    tStatistic: 5.45,
+    sampleSize: 16,
+    averageGrossReturn: 1.60,
+    medianReturn: 1.68,
+    winRate: 62.5,
+    winningTrades: 10,
+    losingTrades: 6,
+    averageNetReturn: 1.50,
+    evidenceLevel: 'Not Statistically Significant (p = 0.503)',
+    conclusion: 'The observed positive average return (+1.50% net) across 16 qualifying events is not statistically significant at the 5% level (p = 0.503, t = 0.67). A positive average return does not prove the hypothesis.',
+    pValue: '0.503',
+    tStatistic: 0.67,
     kurtosis: 3.52,
     skewness: 0.43,
     standardDeviation: 4.09,
     maxAdverseExcursion: -3.15,
-    sharpeRatio: 0.82,
+    sharpeRatio: 0.41,
     distributionBins: CANONICAL_DISTRIBUTION_BINS,
     regimes: {
       bull: { observations: 2, percentage: 12.5, winRate: 100.0, averageNetReturn: 3.31 },

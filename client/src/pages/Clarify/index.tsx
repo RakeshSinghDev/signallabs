@@ -15,7 +15,8 @@ export const ClarifyAmbiguity: React.FC = () => {
 
   const [isEditingQuestion, setIsEditingQuestion] = useState(false);
   const [editedQuestion, setEditedQuestion] = useState(experiment.originalQuestion);
-  const [customThreshold, setCustomThreshold] = useState('-4.5');
+  const [customThreshold, setCustomThreshold] = useState('4.5');
+  const [thresholdError, setThresholdError] = useState<string | null>(null);
   const [customDays, setCustomDays] = useState('2');
   const [customHolding, setCustomHolding] = useState('21');
 
@@ -23,250 +24,262 @@ export const ClarifyAmbiguity: React.FC = () => {
   const card2 = experiment.assumptions.card2;
   const card3 = experiment.assumptions.card3;
 
+  const isMultiThreshold = /3%.*7%.*10%/i.test(experiment.originalQuestion) ||
+    (experiment.originalQuestion.includes('3%') && experiment.originalQuestion.includes('7%') && experiment.originalQuestion.includes('10%'));
+
+  const handleCustomThresholdChange = (val: string) => {
+    setCustomThreshold(val);
+    const num = parseFloat(val);
+    if (isNaN(num) || num <= 0) {
+      setThresholdError('Enter a positive decline percentage.');
+    } else {
+      setThresholdError(null);
+      selectAssumptionOption('card1', 'D', val);
+    }
+  };
+
+  const handleConfirmCard1 = () => {
+    if (card1.selectedOptionId === 'D') {
+      const num = parseFloat(customThreshold);
+      if (isNaN(num) || num <= 0) {
+        setThresholdError('Enter a positive decline percentage.');
+        return;
+      }
+    }
+    toggleConfirmAssumption('card1');
+  };
+
   const handleQuestionSave = () => {
     updateQuestion(editedQuestion);
     setIsEditingQuestion(false);
   };
 
   return (
-    <div className="flex flex-col w-full">
-      {/* Top Secondary Protocol Sub-bar / Stage & Breadcrumb Line */}
-      <section className="w-full bg-surface-container-lowest px-margin py-space-md shadow-xs border-b border-outline-variant/30">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-space-md">
-          {/* Session Path & Progress Indicator */}
-          <div className="flex items-center gap-space-md text-on-surface-variant font-label-code text-label-code">
-            <span className="text-outline uppercase tracking-wider font-label-caps text-label-caps">WORKSPACE</span>
-            <span className="text-outline-variant">/</span>
-            <span className="text-on-surface font-semibold">{experiment.id}</span>
-            <span className="text-outline-variant">/</span>
-            <span className="bg-surface-container px-space-xs py-0.5 text-on-surface font-label-code text-label-code rounded-DEFAULT">
-              SEMANTIC_DECONSTRUCT
+    <div className="flex flex-col w-full pb-28">
+      {/* Top Context Sub-bar */}
+      <div className="w-full bg-white/70 backdrop-blur-sm border-b border-[#E5EAF1] py-3 px-4 sm:px-6">
+        <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-3 text-sm">
+          <div className="flex items-center gap-2">
+            <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#E8F1FD] text-[#2879F2] font-semibold text-xs">
+              Step 2 of 5
             </span>
+            <span className="text-[#667085] font-medium">Clarify: Turn intuitive words into measurable rules</span>
           </div>
-
-          {/* Stage Micro-Status Bar */}
-          <div className="flex items-center gap-space-lg">
-            <div className="flex items-center gap-space-xs font-label-caps text-label-caps">
-              <span className="w-4 h-4 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
-                <span className="material-symbols-outlined text-[11px] font-bold">check</span>
-              </span>
-              <span className="text-on-surface font-medium">1. ASK</span>
-            </div>
-            <span className="h-2 w-px bg-outline-variant"></span>
-            <div className="flex items-center gap-space-xs font-label-caps text-label-caps bg-surface-container-high px-space-sm py-1 rounded-DEFAULT shadow-xs">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-              <span className="text-on-surface font-semibold">2. CLARIFY</span>
-              <span className="ml-space-xs bg-primary text-on-primary px-1.5 py-0.2 rounded-DEFAULT text-[9px] tracking-normal font-label-code">
-                3 AMBIGUITIES FOUND
-              </span>
-            </div>
-            <span className="h-2 w-px bg-outline-variant"></span>
-            <div className="flex items-center gap-space-xs font-label-caps text-label-caps text-outline">
-              <span>3. DEFINE</span>
-            </div>
-            <span className="h-2 w-px bg-outline-variant"></span>
-            <div className="flex items-center gap-space-xs font-label-caps text-label-caps text-outline">
-              <span>4. TEST</span>
-            </div>
+          <div className="flex items-center gap-2 text-xs text-[#667085]">
+            <span className="w-2 h-2 rounded-full bg-[#08B878]"></span>
+            <span>Study ID: {experiment.id}</span>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* Main Research Canvas Body */}
-      <div className="max-w-7xl mx-auto w-full px-margin py-space-xl pb-28 space-y-space-xl">
+      <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 py-8 space-y-6">
         {/* User Natural Language Query Display Card */}
-        <div className="bg-surface-container-lowest p-space-lg rounded-xl shadow-xs border border-outline-variant/30 space-y-space-sm relative overflow-hidden">
+        <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-[#E5EAF1] space-y-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-space-md">
-              <span className="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant bg-surface-container px-space-xs py-0.5 rounded-DEFAULT font-semibold">
-                ORIGINAL NATURAL LANGUAGE PROMPT
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#F3F6FA] text-[#2879F2] uppercase tracking-wider">
+                YOUR QUESTION
               </span>
-              <span className="font-label-code text-label-code text-outline">HASH: {experiment.specHash}</span>
             </div>
             <button
               onClick={() => setIsEditingQuestion(!isEditingQuestion)}
-              className="font-body-sm text-body-sm text-secondary hover:text-on-surface transition-colors flex items-center gap-1 cursor-pointer"
+              className="text-xs font-medium text-[#2879F2] hover:underline flex items-center gap-1 cursor-pointer"
               type="button"
             >
-              <span className="material-symbols-outlined text-[14px]">edit</span>
               {isEditingQuestion ? 'Cancel' : 'Edit Question'}
             </button>
           </div>
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-md pt-space-xs">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-1">
             {isEditingQuestion ? (
-              <div className="flex items-center gap-space-sm w-full">
+              <div className="flex items-center gap-2 w-full">
                 <input
                   type="text"
                   value={editedQuestion}
                   onChange={(e) => setEditedQuestion(e.target.value)}
-                  className="w-full bg-surface-container-low px-3 py-1.5 rounded-DEFAULT font-headline-sm text-on-surface outline-none border border-outline-variant focus:border-primary"
+                  className="w-full bg-[#F8FAFC] px-3 py-2 rounded-xl text-lg font-medium text-[#111111] outline-none border border-[#E5EAF1] focus:border-[#2879F2] focus:bg-white"
                 />
                 <button
                   onClick={handleQuestionSave}
-                  className="px-3 py-1.5 bg-primary text-on-primary font-body-sm rounded-DEFAULT whitespace-nowrap"
+                  className="px-4 py-2 bg-[#111111] text-white text-sm font-semibold rounded-xl whitespace-nowrap hover:bg-black"
                 >
                   Save
                 </button>
               </div>
             ) : (
-              <div className="font-headline-md text-headline-md text-on-surface tracking-tight font-medium pl-space-xs">
+              <div className="text-xl sm:text-2xl text-[#111111] font-bold tracking-tight">
                 “{experiment.originalQuestion}”
               </div>
             )}
-            <div className="flex items-center gap-space-md text-on-surface-variant font-label-code text-label-code shrink-0">
-              <span className="px-space-sm py-0.5 bg-surface-container-low rounded-DEFAULT">NIFTY 50 INDEX</span>
-              <span className="px-space-sm py-0.5 bg-surface-container-low rounded-DEFAULT">DAILY TIME-SERIES</span>
+            <div className="flex items-center gap-2 text-xs text-[#667085] shrink-0">
+              <span className="px-2.5 py-1 bg-[#F3F6FA] rounded-lg font-medium">NIFTY 50 Index</span>
+              <span className="px-2.5 py-1 bg-[#F3F6FA] rounded-lg">Daily History</span>
             </div>
           </div>
         </div>
 
         {/* Ambiguity Deconstruction Banner */}
-        <div className="bg-surface-container-low p-space-lg rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-space-lg shadow-xs border border-outline-variant/30">
+        <div className="bg-white p-6 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm border border-[#E5EAF1]">
           <div className="space-y-1">
-            <div className="flex items-center gap-space-sm">
-              <span className="w-2 h-2 rounded-full bg-primary"></span>
-              <h1 className="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">
-                A few parameters need explicit definition before we can formulate the experiment.
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#2879F2]"></span>
+              <h1 className="text-lg text-[#111111] font-bold tracking-tight">
+                {isMultiThreshold
+                  ? 'Your question specifies drop thresholds (3%, 7%, 10%). Next, confirm execution & holding rules.'
+                  : 'Your question leaves three important details to define.'}
               </h1>
             </div>
-            <p className="font-body-md text-body-md text-on-surface-variant max-w-3xl">
-              Quantitative hypothesis testing requires mathematically unambiguous rules for triggering events, exact order dispatch timing, and investment horizons. Review or adjust AI inferred parameters below.
+            <p className="text-sm text-[#667085] max-w-3xl leading-relaxed">
+              {isMultiThreshold
+                ? 'We recognized your requested 3%, 7%, and 10% decline thresholds. To run the test, we need rules for: (1) baseline threshold selection, (2) trade entry timing, and (3) holding duration and costs.'
+                : 'To test this idea scientifically, we need exact rules for: (1) what counts as a sharp fall, (2) when we would buy, and (3) how long we stay invested. Review our suggested starting points below or choose another option.'}
             </p>
           </div>
-          <div className="shrink-0 flex items-center gap-space-md bg-surface-container-lowest px-space-md py-space-sm rounded-lg shadow-xs border border-outline-variant/30">
+          <div className="shrink-0 flex items-center gap-3 bg-[#F8FAFC] px-4 py-2.5 rounded-xl border border-[#E5EAF1]">
             <div className="text-right">
-              <div className="font-label-caps text-label-caps uppercase text-on-surface-variant">Deterministic Audit</div>
-              <div className="font-label-code text-label-code font-semibold text-on-surface">
-                {confirmedCount} of {totalAmbiguities} explicitly confirmed
+              <div className="text-[11px] font-medium text-[#667085] uppercase tracking-wider">Review Progress</div>
+              <div className="text-sm font-bold text-[#111111]">
+                {confirmedCount} of {totalAmbiguities} confirmed
               </div>
             </div>
-            <span className="material-symbols-outlined text-outline text-[20px]">tune</span>
+            <span className="w-2 h-2 rounded-full bg-[#2879F2]"></span>
           </div>
         </div>
 
         {/* Ambiguity Resolution Panel Grid */}
-        <div className="grid grid-cols-1 gap-space-xl">
+        <div className="space-y-6">
           {/* ITEM 1: What counts as a sharp fall? */}
-          <div className="bg-surface-container-lowest rounded-xl shadow-xs border border-outline-variant/30 p-space-lg transition-all space-y-space-md">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
-              <div className="flex items-center gap-space-sm">
-                <span className="font-label-code text-label-code text-outline font-semibold">AMBIGUITY 01</span>
-                <h2 className="font-headline-sm text-headline-sm text-on-surface font-semibold">
-                  What constitutes a “sharp fall”?
+          <div className="bg-white rounded-2xl shadow-sm border border-[#E5EAF1] p-6 sm:p-8 transition-all space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-[#F3F6FA] text-[#667085]">CHOICE 1 OF 3</span>
+                <h2 className="text-xl text-[#111111] font-bold">
+                  What counts as a “sharp fall”?
                 </h2>
+                <span className="px-2.5 py-0.5 rounded-full bg-[#F3F6FA] text-[#667085] text-xs font-medium">
+                  Trigger Condition
+                </span>
               </div>
-              <div className="flex items-center gap-space-sm">
+              <div className="flex items-center gap-2.5">
                 <span
-                  className={`font-label-caps text-label-caps px-space-sm py-0.5 rounded-DEFAULT flex items-center font-semibold ${
+                  className={`text-xs px-3 py-1 rounded-full font-semibold flex items-center ${
                     card1.isConfirmed
-                      ? 'bg-surface-container-lowest text-on-surface border border-primary'
-                      : 'bg-surface-container-high text-on-surface-variant'
+                      ? 'bg-[#E6F8F1] text-[#08B878]'
+                      : 'bg-[#F3F6FA] text-[#667085]'
                   }`}
                 >
                   <span
                     className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                      card1.isConfirmed ? 'bg-on-tertiary-container' : 'bg-outline'
+                      card1.isConfirmed ? 'bg-[#08B878]' : 'bg-[#667085]'
                     }`}
                   />
-                  {card1.isConfirmed ? 'CONFIRMED BY USER' : 'NEEDS CONFIRMATION · AI REC: OPTION B'}
+                  {card1.isConfirmed ? 'CONFIRMED BY YOU' : 'NEEDS CONFIRMATION · SUGGESTION: OPTION B'}
                 </span>
 
                 <button
-                  onClick={() => toggleConfirmAssumption('card1')}
-                  className={`px-space-md py-space-xs rounded-DEFAULT font-label-caps text-label-caps uppercase flex items-center transition-colors cursor-pointer ${
+                  onClick={handleConfirmCard1}
+                  className={`px-4 py-1.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
                     card1.isConfirmed
-                      ? 'bg-primary text-on-primary shadow-xs'
-                      : 'bg-surface-container-low text-on-surface hover:bg-surface-container-high'
+                      ? 'bg-[#08B878] text-white shadow-xs'
+                      : 'bg-[#111111] text-white hover:bg-black'
                   }`}
                   type="button"
                 >
-                  {card1.isConfirmed ? (
-                    <>
-                      <span className="material-symbols-outlined text-[14px] mr-1">check</span>
-                      Confirmed
-                    </>
-                  ) : (
-                    'Confirm Assumption'
-                  )}
+                  {card1.isConfirmed ? '✓ Confirmed' : 'Confirm Choice'}
                 </button>
               </div>
             </div>
 
             {/* AI Semantic Rationale */}
-            <div className="bg-surface-container-low p-space-md rounded-lg flex items-start gap-space-md text-on-surface-variant font-body-sm text-body-sm border border-outline-variant/20">
-              <span className="material-symbols-outlined text-outline text-[16px] mt-0.5">psychology</span>
-              <div className="space-y-0.5">
-                <span className="font-semibold text-on-surface">Why this assumption: </span>
-                <span>A 5% one-day decline provides a clear, relatively infrequent event definition for this prototype experiment. The threshold can be changed later through sensitivity testing.</span>
+            <div className="bg-[#F8FAFC] p-4 rounded-xl flex items-start gap-3 text-xs text-[#667085] border border-[#E5EAF1]">
+              <span className="text-[#2879F2] text-sm mt-0.5">💡</span>
+              <div className="space-y-0.5 leading-relaxed">
+                <span className="font-semibold text-[#111111]">
+                  {isMultiThreshold ? 'Recognized from question: ' : 'Why this assumption: '}
+                </span>
+                <span>
+                  {isMultiThreshold
+                    ? 'You specified 3%, 7%, and 10% drops in your question. Option A (3%) tests your first threshold, or you can run the baseline 5% test and compare across the multi-threshold ladder.'
+                    : 'A 5% one-day decline provides a clear, relatively infrequent event definition for this prototype experiment. The threshold can be changed later through sensitivity testing.'}
+                </span>
               </div>
             </div>
 
             {/* Options */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-md pt-space-xs">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
               {card1.options.map((opt) => {
                 const isSelected = card1.selectedOptionId === opt.id;
                 return (
                   <div
                     key={opt.id}
                     onClick={() => selectAssumptionOption('card1', opt.id)}
-                    className={`cursor-pointer p-space-md rounded-lg transition-all flex flex-col justify-between space-y-space-md border ${
+                    className={`cursor-pointer p-4 rounded-xl transition-all flex flex-col justify-between space-y-3 border ${
                       isSelected
-                        ? 'bg-surface-container-highest text-on-surface border-primary shadow-xs'
-                        : 'bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-low border-outline-variant/40'
+                        ? 'bg-[#E8F1FD] text-[#111111] border-2 border-[#2879F2] shadow-sm'
+                        : 'bg-[#F8FAFC] text-[#667085] hover:bg-white border-[#E5EAF1]'
                     }`}
                   >
                     <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-space-xs">
+                      <div className="flex items-center gap-1.5">
                         <span
                           className={`w-2 h-2 rounded-full ${
-                            isSelected ? 'bg-primary' : 'bg-outline-variant'
+                            isSelected ? 'bg-[#2879F2]' : 'bg-[#667085]/40'
                           }`}
                         />
-                        <span className="font-label-caps text-label-caps uppercase font-semibold text-on-surface">
+                        <span className="text-xs uppercase font-bold text-[#111111]">
                           Option {opt.id}
                         </span>
                       </div>
                       {opt.isAiSuggested ? (
-                        <span className="font-label-caps text-[9px] bg-primary text-on-primary px-1.5 py-0.2 rounded-DEFAULT tracking-wider font-semibold">
-                          AI SUGGESTED
+                        <span className="text-[10px] bg-[#2879F2] text-white px-2 py-0.5 rounded-full font-bold tracking-wider">
+                          SUGGESTED
                         </span>
                       ) : opt.sampleCount ? (
-                        <span className="font-label-code text-label-code text-on-surface-variant bg-surface-container px-1 py-0.5 rounded-DEFAULT">
+                        <span className="text-[11px] font-mono text-[#667085] bg-white px-1.5 py-0.5 rounded-md border border-[#E5EAF1]">
                           {opt.sampleCount}
                         </span>
                       ) : (
-                        <span className="font-label-code text-label-code text-outline">{opt.meta}</span>
+                        <span className="text-[11px] text-[#667085]">{opt.meta}</span>
                       )}
                     </div>
 
                     <div>
-                      <div className="font-body-md text-body-md font-medium text-on-surface">{opt.label}</div>
-                      <div className="font-body-sm text-body-sm text-on-surface-variant mt-0.5">{opt.description}</div>
+                      <div className="text-sm font-bold text-[#111111]">{opt.label}</div>
+                      <div className="text-xs text-[#667085] mt-1 leading-normal">{opt.description}</div>
                     </div>
 
                     {opt.id === 'D' ? (
-                      <div className="mt-space-xs flex items-center gap-space-xs" onClick={(e) => e.stopPropagation()}>
-                        <input
-                          className="w-16 h-7 bg-surface-container-lowest text-on-surface px-space-xs font-label-numeric text-label-numeric text-right rounded-DEFAULT outline-none border border-outline-variant shadow-xs"
-                          type="text"
-                          value={customThreshold}
-                          onChange={(e) => setCustomThreshold(e.target.value)}
-                        />
-                        <span className="font-label-code text-label-code text-on-surface-variant">% in</span>
-                        <input
-                          className="w-10 h-7 bg-surface-container-lowest text-on-surface px-space-xs font-label-numeric text-label-numeric text-center rounded-DEFAULT outline-none border border-outline-variant shadow-xs"
-                          type="text"
-                          value={customDays}
-                          onChange={(e) => setCustomDays(e.target.value)}
-                        />
-                        <span className="font-label-code text-label-code text-on-surface-variant">days</span>
+                      <div className="mt-1 flex flex-col gap-1" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            className={`w-16 h-7 bg-white text-[#111111] px-2 text-xs font-bold text-right rounded-lg outline-none border ${
+                              thresholdError ? 'border-[#FF4A2D]' : 'border-[#E5EAF1]'
+                            } shadow-xs`}
+                            type="text"
+                            value={customThreshold}
+                            onChange={(e) => handleCustomThresholdChange(e.target.value)}
+                          />
+                          <span className="text-xs text-[#667085] font-medium">% in</span>
+                          <input
+                            className="w-10 h-7 bg-white text-[#111111] px-1 text-xs font-bold text-center rounded-lg outline-none border border-[#E5EAF1] shadow-xs"
+                            type="text"
+                            value={customDays}
+                            onChange={(e) => setCustomDays(e.target.value)}
+                          />
+                          <span className="text-xs text-[#667085]">days</span>
+                        </div>
+                        {thresholdError && (
+                          <div className="text-[#FF4A2D] text-[11px] font-medium">
+                            {thresholdError}
+                          </div>
+                        )}
                       </div>
                     ) : (
-                      <div className="font-label-code text-label-code text-outline pt-space-xs flex justify-between items-center">
+                      <div className="text-[11px] text-[#667085] pt-1 flex justify-between items-center">
                         <span>{opt.meta}</span>
                         {isSelected && (
-                          <span className="font-semibold text-primary font-label-caps text-label-caps">
+                          <span className="font-bold text-[#2879F2] text-[10px] tracking-wider">
                             ACTIVE SELECTION
                           </span>
                         )}
@@ -278,123 +291,113 @@ export const ClarifyAmbiguity: React.FC = () => {
             </div>
 
             {/* Inline Historical Sparkline */}
-            <div className="pt-space-xs flex flex-col sm:flex-row sm:items-center justify-between gap-space-md bg-surface-container-low px-space-md py-space-sm rounded-lg border border-outline-variant/30">
-              <div className="flex items-center gap-space-md font-label-code text-label-code text-on-surface-variant">
-                <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-sm bg-primary"></span>Historical NIFTY Trigger Distribution
-                </span>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-[#F8FAFC] px-4 py-2.5 rounded-xl border border-[#E5EAF1]">
+              <div className="flex items-center gap-2 text-xs text-[#667085]">
+                <span className="w-2 h-2 rounded-sm bg-[#2879F2]"></span>
+                <span className="font-medium text-[#111111]">Historical NIFTY Trigger Distribution</span>
                 <span className="hidden md:inline">•</span>
                 <span className="hidden md:inline">Observed Sample: {experiment.totalTradingSessions.toLocaleString()} Sessions ({experiment.dataPeriod})</span>
               </div>
-              <div className="flex items-center gap-1">
-                <svg className="text-on-surface-variant" fill="none" height="20" viewBox="0 0 140 20" width="140">
-                  <path d="M0 18 Q 30 18 50 16 T 80 12 T 110 5 T 140 2" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                  <line stroke="#ba1a1a" strokeDasharray="2 2" strokeWidth="1.5" x1="90" x2="90" y1="0" y2="20" />
-                  <circle cx="90" cy="10" fill="#ba1a1a" r="2.5" />
-                </svg>
-                <span className="font-label-code text-label-code text-error ml-1">-{((experiment.threshold || 0.05) * 100).toFixed(1)}% threshold</span>
+              <div className="flex items-center gap-2 text-xs">
+                <span className="font-semibold text-[#FF4A2D]">-{((experiment.threshold || 0.05) * 100).toFixed(1)}% threshold</span>
               </div>
             </div>
           </div>
 
           {/* ITEM 2: When should trade entry occur? */}
-          <div className="bg-surface-container-lowest rounded-xl shadow-xs border border-outline-variant/30 p-space-lg transition-all space-y-space-md">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
-              <div className="flex items-center gap-space-sm">
-                <span className="font-label-code text-label-code text-outline font-semibold">AMBIGUITY 02</span>
-                <h2 className="font-headline-sm text-headline-sm text-on-surface font-semibold">
-                  When should the trade entry occur?
+          <div className="bg-white rounded-2xl shadow-sm border border-[#E5EAF1] p-6 sm:p-8 transition-all space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-[#F3F6FA] text-[#667085]">CHOICE 2 OF 3</span>
+                <h2 className="text-xl text-[#111111] font-bold">
+                  When would we buy?
                 </h2>
+                <span className="px-2.5 py-0.5 rounded-full bg-[#F3F6FA] text-[#667085] text-xs font-medium">
+                  Trade Entry Rule
+                </span>
               </div>
-              <div className="flex items-center gap-space-sm">
+              <div className="flex items-center gap-2.5">
                 <span
-                  className={`font-label-caps text-label-caps px-space-sm py-0.5 rounded-DEFAULT flex items-center font-semibold ${
+                  className={`text-xs px-3 py-1 rounded-full font-semibold flex items-center ${
                     card2.isConfirmed
-                      ? 'bg-surface-container-lowest text-on-surface border border-primary'
-                      : 'bg-surface-container-high text-on-surface-variant'
+                      ? 'bg-[#E6F8F1] text-[#08B878]'
+                      : 'bg-[#F3F6FA] text-[#667085]'
                   }`}
                 >
                   <span
                     className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                      card2.isConfirmed ? 'bg-on-tertiary-container' : 'bg-outline'
+                      card2.isConfirmed ? 'bg-[#08B878]' : 'bg-[#667085]'
                     }`}
                   />
-                  {card2.isConfirmed ? 'CONFIRMED BY USER' : 'NEEDS CONFIRMATION · AI REC: NEXT OPEN'}
+                  {card2.isConfirmed ? 'CONFIRMED BY YOU' : 'NEEDS CONFIRMATION · SUGGESTION: NEXT OPEN'}
                 </span>
 
                 <button
                   onClick={() => toggleConfirmAssumption('card2')}
-                  className={`px-space-md py-space-xs rounded-DEFAULT font-label-caps text-label-caps uppercase flex items-center transition-colors cursor-pointer ${
+                  className={`px-4 py-1.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
                     card2.isConfirmed
-                      ? 'bg-primary text-on-primary shadow-xs'
-                      : 'bg-surface-container-low text-on-surface hover:bg-surface-container-high'
+                      ? 'bg-[#08B878] text-white shadow-xs'
+                      : 'bg-[#111111] text-white hover:bg-black'
                   }`}
                   type="button"
                 >
-                  {card2.isConfirmed ? (
-                    <>
-                      <span className="material-symbols-outlined text-[14px] mr-1">check</span>
-                      Confirmed
-                    </>
-                  ) : (
-                    'Confirm Assumption'
-                  )}
+                  {card2.isConfirmed ? '✓ Confirmed' : 'Confirm Choice'}
                 </button>
               </div>
             </div>
 
             {/* AI Semantic Rationale */}
-            <div className="bg-surface-container-low p-space-md rounded-lg flex items-start gap-space-md text-on-surface-variant font-body-sm text-body-sm border border-outline-variant/20">
-              <span className="material-symbols-outlined text-outline text-[16px] mt-0.5">psychology</span>
-              <div className="space-y-0.5">
-                <span className="font-semibold text-on-surface">Execution Rationale: </span>
+            <div className="bg-[#F8FAFC] p-4 rounded-xl flex items-start gap-3 text-xs text-[#667085] border border-[#E5EAF1]">
+              <span className="text-[#2879F2] text-sm mt-0.5">💡</span>
+              <div className="space-y-0.5 leading-relaxed">
+                <span className="font-semibold text-[#111111]">Why this assumption: </span>
                 <span>{card2.statisticalRationale}</span>
               </div>
             </div>
 
             {/* Options */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-space-md pt-space-xs">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
               {card2.options.map((opt) => {
                 const isSelected = card2.selectedOptionId === opt.id;
                 return (
                   <div
                     key={opt.id}
                     onClick={() => selectAssumptionOption('card2', opt.id)}
-                    className={`cursor-pointer p-space-md rounded-lg transition-all flex flex-col justify-between space-y-space-md border ${
+                    className={`cursor-pointer p-4 rounded-xl transition-all flex flex-col justify-between space-y-3 border ${
                       isSelected
-                        ? 'bg-surface-container-highest text-on-surface border-primary shadow-xs'
-                        : 'bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-low border-outline-variant/40'
+                        ? 'bg-[#E8F1FD] text-[#111111] border-2 border-[#2879F2] shadow-sm'
+                        : 'bg-[#F8FAFC] text-[#667085] hover:bg-white border-[#E5EAF1]'
                     }`}
                   >
                     <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-space-xs">
+                      <div className="flex items-center gap-1.5">
                         <span
                           className={`w-2 h-2 rounded-full ${
-                            isSelected ? 'bg-primary' : 'bg-outline-variant'
+                            isSelected ? 'bg-[#2879F2]' : 'bg-[#667085]/40'
                           }`}
                         />
-                        <span className="font-label-caps text-label-caps uppercase font-semibold text-on-surface">
-                          Mode {opt.id}
+                        <span className="text-xs uppercase font-bold text-[#111111]">
+                          Option {opt.id}
                         </span>
                       </div>
                       {opt.isAiSuggested ? (
-                        <span className="font-label-caps text-[9px] bg-primary text-on-primary px-1.5 py-0.2 rounded-DEFAULT tracking-wider font-semibold">
-                          AI SUGGESTED
+                        <span className="text-[10px] bg-[#2879F2] text-white px-2 py-0.5 rounded-full font-bold tracking-wider">
+                          SUGGESTED
                         </span>
                       ) : (
-                        <span className="font-label-code text-label-code text-outline">{opt.meta}</span>
+                        <span className="text-[11px] text-[#667085]">{opt.meta}</span>
                       )}
                     </div>
 
                     <div>
-                      <div className="font-body-md text-body-md font-medium text-on-surface">{opt.label}</div>
-                      <div className="font-body-sm text-body-sm text-on-surface-variant mt-0.5">{opt.description}</div>
+                      <div className="text-sm font-bold text-[#111111]">{opt.label}</div>
+                      <div className="text-xs text-[#667085] mt-1 leading-normal">{opt.description}</div>
                     </div>
 
-                    <div className="font-label-code text-label-code text-outline pt-space-xs flex justify-between items-center">
+                    <div className="text-[11px] text-[#667085] pt-1 flex justify-between items-center">
                       <span>{opt.meta}</span>
                       {isSelected && (
-                        <span className="font-semibold text-primary font-label-caps text-label-caps">
+                        <span className="font-bold text-[#2879F2] text-[10px] tracking-wider">
                           ACTIVE SELECTION
                         </span>
                       )}
@@ -406,80 +409,76 @@ export const ClarifyAmbiguity: React.FC = () => {
           </div>
 
           {/* ITEM 3: How long should we hold the position? */}
-          <div className="bg-surface-container-lowest rounded-xl shadow-xs border border-outline-variant/30 p-space-lg transition-all space-y-space-md">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
-              <div className="flex items-center gap-space-sm">
-                <span className="font-label-code text-label-code text-outline font-semibold">AMBIGUITY 03</span>
-                <h2 className="font-headline-sm text-headline-sm text-on-surface font-semibold">
-                  How long should the position be held? (Holding Horizon)
+          <div className="bg-white rounded-2xl shadow-sm border border-[#E5EAF1] p-6 sm:p-8 transition-all space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-[#F3F6FA] text-[#667085]">CHOICE 3 OF 3</span>
+                <h2 className="text-xl text-[#111111] font-bold">
+                  How long should we stay invested?
                 </h2>
+                <span className="px-2.5 py-0.5 rounded-full bg-[#F3F6FA] text-[#667085] text-xs font-medium">
+                  Holding Period
+                </span>
               </div>
-              <div className="flex items-center gap-space-sm">
+              <div className="flex items-center gap-2.5">
                 <span
-                  className={`font-label-caps text-label-caps px-space-sm py-0.5 rounded-DEFAULT flex items-center font-semibold ${
+                  className={`text-xs px-3 py-1 rounded-full font-semibold flex items-center ${
                     card3.isConfirmed
-                      ? 'bg-surface-container-lowest text-on-surface border border-primary'
-                      : 'bg-surface-container-high text-on-surface-variant'
+                      ? 'bg-[#E6F8F1] text-[#08B878]'
+                      : 'bg-[#F3F6FA] text-[#667085]'
                   }`}
                 >
                   <span
                     className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                      card3.isConfirmed ? 'bg-on-tertiary-container' : 'bg-outline'
+                      card3.isConfirmed ? 'bg-[#08B878]' : 'bg-[#667085]'
                     }`}
                   />
-                  {card3.isConfirmed ? 'CONFIRMED BY USER' : 'NEEDS CONFIRMATION · AI REC: 5 SESSIONS'}
+                  {card3.isConfirmed ? 'CONFIRMED BY YOU' : 'NEEDS CONFIRMATION · SUGGESTION: 5 SESSIONS'}
                 </span>
 
                 <button
                   onClick={() => toggleConfirmAssumption('card3')}
-                  className={`px-space-md py-space-xs rounded-DEFAULT font-label-caps text-label-caps uppercase flex items-center transition-colors cursor-pointer ${
+                  className={`px-4 py-1.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
                     card3.isConfirmed
-                      ? 'bg-primary text-on-primary shadow-xs'
-                      : 'bg-surface-container-low text-on-surface hover:bg-surface-container-high'
+                      ? 'bg-[#08B878] text-white shadow-xs'
+                      : 'bg-[#111111] text-white hover:bg-black'
                   }`}
                   type="button"
                 >
-                  {card3.isConfirmed ? (
-                    <>
-                      <span className="material-symbols-outlined text-[14px] mr-1">check</span>
-                      Confirmed
-                    </>
-                  ) : (
-                    'Confirm Assumption'
-                  )}
+                  {card3.isConfirmed ? '✓ Confirmed' : 'Confirm Choice'}
                 </button>
               </div>
             </div>
 
             {/* AI Semantic Rationale */}
-            <div className="bg-surface-container-low p-space-md rounded-lg flex items-start gap-space-md text-on-surface-variant font-body-sm text-body-sm border border-outline-variant/20">
-              <span className="material-symbols-outlined text-outline text-[16px] mt-0.5">psychology</span>
-              <div className="space-y-0.5">
-                <span className="font-semibold text-on-surface">Empirical Horizon Rationale: </span>
+            <div className="bg-[#F8FAFC] p-4 rounded-xl flex items-start gap-3 text-xs text-[#667085] border border-[#E5EAF1]">
+              <span className="text-[#2879F2] text-sm mt-0.5">💡</span>
+              <div className="space-y-0.5 leading-relaxed">
+                <span className="font-semibold text-[#111111]">Why this assumption: </span>
                 <span>{card3.statisticalRationale}</span>
               </div>
             </div>
 
             {/* Horizontal Radio Pills */}
-            <div className="space-y-space-md pt-space-xs">
-              <div className="flex flex-wrap items-center gap-space-sm">
+            <div className="space-y-4 pt-1">
+              <div className="flex flex-wrap items-center gap-2">
                 {card3.options.map((opt) => {
                   const isSelected = card3.selectedOptionId === opt.id;
                   if (opt.id === 'custom') {
                     return (
                       <div
                         key={opt.id}
-                        className="h-9 px-space-md rounded-DEFAULT bg-surface-container-low flex items-center gap-space-xs shadow-xs border border-outline-variant/30"
+                        className="h-10 px-3 rounded-xl bg-[#F8FAFC] flex items-center gap-1.5 border border-[#E5EAF1]"
                       >
-                        <span className="font-body-sm text-body-sm text-on-surface-variant">Custom:</span>
+                        <span className="text-xs text-[#667085]">Custom:</span>
                         <input
-                          className="w-12 h-6 bg-surface-container-lowest text-on-surface px-1 text-center font-label-numeric text-label-numeric rounded-DEFAULT outline-none border border-outline-variant focus:ring-1 focus:ring-primary shadow-xs"
+                          className="w-12 h-6 bg-white text-[#111111] px-1 text-center text-xs font-bold rounded-md outline-none border border-[#E5EAF1] focus:ring-1 focus:ring-[#2879F2]"
                           placeholder="21"
                           type="number"
                           value={customHolding}
                           onChange={(e) => setCustomHolding(e.target.value)}
                         />
-                        <span className="font-label-code text-label-code text-on-surface-variant">sessions</span>
+                        <span className="text-xs text-[#667085]">sessions</span>
                       </div>
                     );
                   }
@@ -489,53 +488,53 @@ export const ClarifyAmbiguity: React.FC = () => {
                       key={opt.id}
                       type="button"
                       onClick={() => selectAssumptionOption('card3', opt.id)}
-                      className={`h-9 px-space-lg rounded-DEFAULT font-body-sm text-body-sm flex items-center gap-space-xs transition-all shadow-xs border cursor-pointer ${
+                      className={`h-10 px-4 rounded-xl text-xs flex items-center gap-2 transition-all border cursor-pointer ${
                         isSelected
-                          ? 'bg-surface-container-highest text-on-surface font-semibold border-primary'
-                          : 'bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-low border-outline-variant/40'
+                          ? 'bg-[#E8F1FD] text-[#111111] font-bold border-2 border-[#2879F2] shadow-sm'
+                          : 'bg-[#F8FAFC] text-[#667085] hover:bg-white border-[#E5EAF1]'
                       }`}
                     >
                       <span
                         className={`w-2 h-2 rounded-full ${
-                          isSelected ? 'bg-primary' : 'bg-outline-variant'
+                          isSelected ? 'bg-[#2879F2]' : 'bg-[#667085]/40'
                         }`}
                       />
                       <span>{opt.label}</span>
                       {opt.isAiSuggested && (
-                        <span className="font-label-caps text-[9px] bg-primary text-on-primary px-1.5 py-0.2 rounded-DEFAULT tracking-wider ml-1 font-semibold">
-                          AI SUGGESTED
+                        <span className="text-[10px] bg-[#2879F2] text-white px-2 py-0.5 rounded-full font-bold ml-1">
+                          SUGGESTED
                         </span>
                       )}
-                      <span className="font-label-code text-label-code text-outline ml-1">{opt.meta}</span>
+                      <span className="text-[#667085] text-[11px] ml-1">{opt.meta}</span>
                     </button>
                   );
                 })}
               </div>
 
               {/* Alpha Decay Metric Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-space-md pt-space-xs">
-                <div className="p-space-sm bg-surface-container-low rounded-lg border border-outline-variant/20">
-                  <div className="font-label-caps text-label-caps uppercase text-outline">Expected Win Rate (5D)</div>
-                  <div className="font-label-numeric text-label-numeric text-on-surface font-semibold text-headline-sm mt-0.5">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+                <div className="p-3.5 bg-[#F8FAFC] rounded-xl border border-[#E5EAF1]">
+                  <div className="text-[11px] uppercase font-semibold text-[#667085]">Win Rate (5 Days)</div>
+                  <div className="text-lg font-bold text-[#111111] mt-0.5">
                     {experiment.results.winRate}%
                   </div>
                 </div>
-                <div className="p-space-sm bg-surface-container-low rounded-lg border border-outline-variant/20">
-                  <div className="font-label-caps text-label-caps uppercase text-outline">Avg Net Return</div>
-                  <div className="font-label-numeric text-label-numeric text-on-tertiary-container font-semibold text-headline-sm mt-0.5">
+                <div className="p-3.5 bg-[#F8FAFC] rounded-xl border border-[#E5EAF1]">
+                  <div className="text-[11px] uppercase font-semibold text-[#667085]">Avg Net Return</div>
+                  <div className="text-lg font-bold text-[#08B878] mt-0.5">
                     +{experiment.results.averageNetReturn}%
                   </div>
                 </div>
-                <div className="p-space-sm bg-surface-container-low rounded-lg border border-outline-variant/20">
-                  <div className="font-label-caps text-label-caps uppercase text-outline">Max Adverse Excursion</div>
-                  <div className="font-label-numeric text-label-numeric text-error font-semibold text-headline-sm mt-0.5">
+                <div className="p-3.5 bg-[#F8FAFC] rounded-xl border border-[#E5EAF1]">
+                  <div className="text-[11px] uppercase font-semibold text-[#667085]">Deepest Intraday Dip</div>
+                  <div className="text-lg font-bold text-[#FF4A2D] mt-0.5">
                     {experiment.results.maxAdverseExcursion}%
                   </div>
                 </div>
-                <div className="p-space-sm bg-surface-container-low rounded-lg border border-outline-variant/20">
-                  <div className="font-label-caps text-label-caps uppercase text-outline">Sharpe Benchmark</div>
-                  <div className="font-label-numeric text-label-numeric text-on-surface font-semibold text-headline-sm mt-0.5">
-                    {experiment.results.sharpeRatio} SR
+                <div className="p-3.5 bg-[#F8FAFC] rounded-xl border border-[#E5EAF1]">
+                  <div className="text-[11px] uppercase font-semibold text-[#667085]">Risk-Adjusted Ratio</div>
+                  <div className="text-lg font-bold text-[#111111] mt-0.5">
+                    {experiment.results.sharpeRatio} Sharpe
                   </div>
                 </div>
               </div>
@@ -543,101 +542,110 @@ export const ClarifyAmbiguity: React.FC = () => {
           </div>
 
           {/* ITEM 4: Test period & Historical dataset (Pre-set Baseline) */}
-          <div className="bg-surface-container-lowest rounded-xl shadow-xs border border-outline-variant/30 p-space-lg space-y-space-md">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
-              <div className="flex items-center gap-space-sm">
-                <span className="font-label-code text-label-code text-outline font-semibold">PRE-SET 04</span>
-                <h2 className="font-headline-sm text-headline-sm text-on-surface font-semibold">
-                  Historical Timeframe &amp; Data Quality Baseline
+          <div className="bg-white rounded-2xl shadow-sm border border-[#E5EAF1] p-6 sm:p-8 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-[#F3F6FA] text-[#667085]">STUDY DEFAULTS</span>
+                <h2 className="text-xl text-[#111111] font-bold">
+                  What timeframe and trading costs are included?
                 </h2>
+                <span className="px-2.5 py-0.5 rounded-full bg-[#F3F6FA] text-[#667085] text-xs font-medium">
+                  Dataset Baseline
+                </span>
               </div>
-              <div className="flex items-center gap-space-sm">
-                <span className="font-label-caps text-label-caps px-space-sm py-0.5 rounded-DEFAULT bg-surface-container-lowest text-on-surface font-semibold flex items-center shadow-xs border border-outline-variant/40">
-                  <span className="w-1.5 h-1.5 rounded-full bg-on-tertiary-container mr-1.5"></span>
-                  CONFIRMED DEFAULT
+              <div className="flex items-center gap-2">
+                <span className="text-xs px-3 py-1 rounded-full bg-[#E6F8F1] text-[#08B878] font-semibold flex items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#08B878] mr-1.5"></span>
+                  STANDARD DEFAULTS
                 </span>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-space-md bg-surface-container-low p-space-md rounded-lg text-body-sm text-on-surface-variant border border-outline-variant/20">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 bg-[#F8FAFC] p-4 rounded-xl text-xs text-[#667085] border border-[#E5EAF1]">
               <div className="space-y-1">
-                <div className="font-label-caps text-label-caps uppercase text-outline">Observation Window</div>
-                <div className="font-label-code text-label-code text-on-surface font-semibold">
+                <div className="text-[11px] font-semibold uppercase text-[#667085]">Observation Window</div>
+                <div className="text-sm font-bold text-[#111111]">
                   {experiment.dataPeriod} (7 Years)
                 </div>
                 <div>Spans COVID-19 shock, 2022 rate hike cycles, 2024 breakout.</div>
               </div>
               <div className="space-y-1">
-                <div className="font-label-caps text-label-caps uppercase text-outline">Asset Architecture</div>
-                <div className="font-label-code text-label-code text-on-surface font-semibold">
-                  {experiment.market} Total Returns (NSE_EOD_TR)
+                <div className="text-[11px] font-semibold uppercase text-[#667085]">Market Asset</div>
+                <div className="text-sm font-bold text-[#111111]">
+                  {experiment.market} Index (Price Return)
                 </div>
-                <div>Adjusted for split, bonus, and dividend reinvestment.</div>
+                <div>NSE daily price history across 50 index constituents.</div>
               </div>
               <div className="space-y-1">
-                <div className="font-label-caps text-label-caps uppercase text-outline">Friction &amp; Slippage Baseline</div>
-                <div className="font-label-code text-label-code text-on-surface font-semibold">
+                <div className="text-[11px] font-semibold uppercase text-[#667085]">Trading Cost Baseline</div>
+                <div className="text-sm font-bold text-[#111111]">
                   0.10% Round-trip Cost included
                 </div>
-                <div>STT, exchange fees, and conservative impact spread models applied.</div>
+                <div>STT, exchange fees, and estimated execution slippage subtracted.</div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Formulated Mathematical Translation Spec */}
-        <div className="bg-surface-container-lowest rounded-xl shadow-xs border border-outline-variant/30 p-space-lg space-y-space-md">
+        {/* Summary: How Your Question Translates Into Rules */}
+        <div className="bg-white rounded-2xl shadow-sm border border-[#E5EAF1] p-6 sm:p-8 space-y-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-space-sm">
-              <span className="material-symbols-outlined text-[18px] text-primary">compare_arrows</span>
-              <h3 className="font-headline-sm text-headline-sm text-on-surface font-semibold">
-                Formulated Mathematical Translation Spec
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#2879F2]"></span>
+              <h3 className="text-lg text-[#111111] font-bold">
+                Summary of Experiment Rules
               </h3>
             </div>
-            <span className="font-label-code text-label-code text-on-surface-variant">
-              READY FOR INGESTION ENGINE
+            <span className="text-xs text-[#667085]">
+              Ready to formulate experiment plan
             </span>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left font-body-sm text-body-sm">
+            <table className="w-full text-left text-sm">
               <thead>
-                <tr className="bg-surface-container-low text-on-surface-variant font-label-caps text-label-caps uppercase">
-                  <th className="py-space-sm px-space-md">Colloquial Term (User)</th>
-                  <th className="py-space-sm px-space-md">Deterministic Parameter (SignalLab)</th>
-                  <th className="py-space-sm px-space-md">Mathematical Representation</th>
-                  <th className="py-space-sm px-space-md text-right">Status</th>
+                <tr className="bg-[#F8FAFC] text-[#667085] text-xs font-semibold border-b border-[#E5EAF1] h-9">
+                  <th className="py-2 px-4">What You Asked</th>
+                  <th className="py-2 px-4">Clear Rule for Experiment</th>
+                  <th className="py-2 px-4">Exact Calculation Rule</th>
+                  <th className="py-2 px-4 text-right">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-surface-container-low">
-                <tr className="hover:bg-surface-container-low/50">
-                  <td className="py-space-md px-space-md font-medium text-on-surface">“Sharp fall”</td>
-                  <td className="py-space-md px-space-md text-on-surface">{card1.confirmedValue}</td>
-                  <td className="py-space-md px-space-md font-label-code text-label-code text-on-surface-variant">
+              <tbody className="divide-y divide-[#E5EAF1]">
+                <tr className="hover:bg-[#F8FAFC]">
+                  <td className="py-3 px-4 font-semibold text-[#111111]">“Sharp fall”</td>
+                  <td className="py-3 px-4 text-[#111111]">{card1.confirmedValue}</td>
+                  <td className="py-3 px-4 font-mono text-xs text-[#667085]">
                     Close[t] / Close[t-1] - 1.0 ≤ -0.05
                   </td>
-                  <td className="py-space-md px-space-md text-right font-label-caps text-label-caps text-on-surface font-semibold">
-                    {card1.isConfirmed ? 'USER CONFIRMED' : 'AI PROPOSED'}
+                  <td className="py-3 px-4 text-right text-xs font-semibold">
+                    <span className={`px-2.5 py-0.5 rounded-full ${card1.isConfirmed ? 'bg-[#E6F8F1] text-[#08B878]' : 'bg-[#F3F6FA] text-[#667085]'}`}>
+                      {card1.isConfirmed ? 'CONFIRMED' : 'SUGGESTED'}
+                    </span>
                   </td>
                 </tr>
-                <tr className="hover:bg-surface-container-low/50">
-                  <td className="py-space-md px-space-md font-medium text-on-surface">“Buying NIFTY”</td>
-                  <td className="py-space-md px-space-md text-on-surface">{card2.confirmedValue}</td>
-                  <td className="py-space-md px-space-md font-label-code text-label-code text-on-surface-variant">
+                <tr className="hover:bg-[#F8FAFC]">
+                  <td className="py-3 px-4 font-semibold text-[#111111]">“Buying NIFTY”</td>
+                  <td className="py-3 px-4 text-[#111111]">{card2.confirmedValue}</td>
+                  <td className="py-3 px-4 font-mono text-xs text-[#667085]">
                     Order.Execute(Type=MOO, Bar=T+1, Asset=NIFTY)
                   </td>
-                  <td className="py-space-md px-space-md text-right font-label-caps text-label-caps text-on-surface font-semibold">
-                    {card2.isConfirmed ? 'USER CONFIRMED' : 'AI PROPOSED'}
+                  <td className="py-3 px-4 text-right text-xs font-semibold">
+                    <span className={`px-2.5 py-0.5 rounded-full ${card2.isConfirmed ? 'bg-[#E6F8F1] text-[#08B878]' : 'bg-[#F3F6FA] text-[#667085]'}`}>
+                      {card2.isConfirmed ? 'CONFIRMED' : 'SUGGESTED'}
+                    </span>
                   </td>
                 </tr>
-                <tr className="hover:bg-surface-container-low/50">
-                  <td className="py-space-md px-space-md font-medium text-on-surface">“Does it work?”</td>
-                  <td className="py-space-md px-space-md text-on-surface">{card3.confirmedValue} holding horizon</td>
-                  <td className="py-space-md px-space-md font-label-code text-label-code text-on-surface-variant">
-                    ΔP = Close[T+5] - Open[T+1]; Sharpe &gt; 0.8
+                <tr className="hover:bg-[#F8FAFC]">
+                  <td className="py-3 px-4 font-semibold text-[#111111]">“Does it work?”</td>
+                  <td className="py-3 px-4 text-[#111111]">{card3.confirmedValue} holding horizon</td>
+                  <td className="py-3 px-4 font-mono text-xs text-[#667085]">
+                    ΔP = Close[T+5] - Open[T+1]; Net Return &gt; 0%
                   </td>
-                  <td className="py-space-md px-space-md text-right font-label-caps text-label-caps text-on-surface font-semibold">
-                    {card3.isConfirmed ? 'USER CONFIRMED' : 'AI PROPOSED'}
+                  <td className="py-3 px-4 text-right text-xs font-semibold">
+                    <span className={`px-2.5 py-0.5 rounded-full ${card3.isConfirmed ? 'bg-[#E6F8F1] text-[#08B878]' : 'bg-[#F3F6FA] text-[#667085]'}`}>
+                      {card3.isConfirmed ? 'CONFIRMED' : 'SUGGESTED'}
+                    </span>
                   </td>
                 </tr>
               </tbody>
@@ -646,21 +654,21 @@ export const ClarifyAmbiguity: React.FC = () => {
         </div>
       </div>
 
-      {/* Persistent Bottom Control Dock (Sticky above compliance footer) */}
-      <div className="fixed bottom-10 left-0 right-0 z-30 bg-surface-container-lowest shadow-[0_-2px_12px_rgba(0,0,0,0.06)] border-t border-outline-variant/30 px-margin py-space-sm">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-space-md">
+      {/* Persistent Bottom Control Dock */}
+      <div className="fixed bottom-11 left-0 right-0 z-30 bg-white/95 backdrop-blur-md shadow-lg border-t border-[#E5EAF1] px-4 sm:px-6 py-3">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           {/* Status Feedback */}
-          <div className="flex items-center text-body-sm text-body-sm text-on-surface-variant">
+          <div className="flex items-center text-sm text-[#667085]">
             <span
-              className={`w-2 h-2 rounded-full mr-2 shrink-0 ${
-                confirmedCount === 3 ? 'bg-on-tertiary-container' : 'bg-outline'
+              className={`w-2.5 h-2.5 rounded-full mr-2 shrink-0 ${
+                confirmedCount === 3 ? 'bg-[#08B878]' : 'bg-[#2879F2]'
               }`}
             />
             {confirmedCount === 3 ? (
-              <span>All 3 assumptions confirmed. Ready to review specification.</span>
+              <span className="font-medium text-[#111111]">All 3 assumptions confirmed. Ready to review specification.</span>
             ) : (
               <span>
-                <strong className="font-semibold text-on-surface">
+                <strong className="font-semibold text-[#111111]">
                   {3 - confirmedCount} {3 - confirmedCount === 1 ? 'assumption needs' : 'assumptions need'}
                 </strong>{' '}
                 your confirmation
@@ -669,21 +677,21 @@ export const ClarifyAmbiguity: React.FC = () => {
           </div>
 
           {/* Interactive Actions */}
-          <div className="flex items-center gap-space-md w-full sm:w-auto justify-end">
+          <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
             <button
               onClick={resetAssumptionsToDefault}
-              className="h-8 px-space-lg rounded-DEFAULT font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl text-xs font-medium text-[#667085] hover:text-[#111111] hover:bg-[#F3F6FA] transition-colors cursor-pointer"
               type="button"
             >
               Reset to Defaults
             </button>
             <button
               onClick={() => goToPhase('define')}
-              className="h-8 px-space-xl rounded-DEFAULT font-body-sm text-body-sm font-medium bg-primary text-on-primary hover:bg-inverse-surface transition-all flex items-center gap-space-xs shadow-xs cursor-pointer"
+              className="px-6 py-2.5 rounded-xl text-sm font-semibold bg-[#111111] text-white hover:bg-black transition-all flex items-center gap-2 shadow-sm cursor-pointer"
               type="button"
             >
-              <span>Review Experiment Specification</span>
-              <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+              <span>Review Experiment Plan</span>
+              <span className="text-base">→</span>
             </button>
           </div>
         </div>

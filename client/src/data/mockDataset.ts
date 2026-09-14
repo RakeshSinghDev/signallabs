@@ -3,7 +3,7 @@ export interface RecentExperimentRow {
   name: string;
   market: string;
   hypothesisType: string;
-  status: 'Completed' | 'Draft' | 'Running';
+  status: 'Active' | 'Template';
   observations: string;
   netReturn: string;
   holdingDays: string;
@@ -14,53 +14,55 @@ export interface RecentExperimentRow {
 
 export const RECENT_EXPERIMENTS: RecentExperimentRow[] = [
   {
-    id: 'EXP-2025-0842',
-    name: 'NIFTY mean reversion after large declines',
+    id: 'EXP-CANONICAL-01',
+    name: 'NIFTY mean reversion after large declines (Active Study)',
     market: 'NIFTY 50',
     hypothesisType: 'Mean Reversion',
-    status: 'Completed',
-    observations: '1,842 obs',
-    netReturn: '+0.52%',
+    status: 'Active',
+    observations: '16 events (1,849 days)',
+    netReturn: '+1.50%',
     holdingDays: '5d',
-    lastModified: '2 hours ago',
+    lastModified: 'Active study',
     actionText: 'View findings'
   },
   {
-    id: 'EXP-2025-0841',
-    name: 'Bank NIFTY gap-down recovery',
+    id: 'EXAMPLE-02',
+    name: 'Bank NIFTY gap-down recovery (Example Template)',
     market: 'BANKNIFTY',
     hypothesisType: 'Gap Fill',
-    status: 'Draft',
-    observations: '—',
+    status: 'Template',
+    observations: 'Template only',
     netReturn: '—',
     holdingDays: '3d',
-    lastModified: 'Yesterday',
-    actionText: 'Resume',
+    lastModified: 'Template',
+    actionText: 'Use template',
     canResume: true
   },
   {
-    id: 'EXP-2025-0839',
-    name: 'India VIX spike > 20% reversal',
+    id: 'EXAMPLE-03',
+    name: 'India VIX spike > 20% reversal (Example Template)',
     market: 'INDIA VIX',
     hypothesisType: 'Volatility',
-    status: 'Completed',
-    observations: '412 obs',
-    netReturn: '+1.18%',
+    status: 'Template',
+    observations: 'Template only',
+    netReturn: '—',
     holdingDays: '10d',
-    lastModified: '3 days ago',
-    actionText: 'View findings'
+    lastModified: 'Template',
+    actionText: 'Use template',
+    canResume: true
   },
   {
-    id: 'EXP-2025-0835',
-    name: 'NIFTY 200-DMA pullback test',
+    id: 'EXAMPLE-04',
+    name: 'NIFTY 200-DMA pullback test (Example Template)',
     market: 'NIFTY 50',
     hypothesisType: 'Trend Pullback',
-    status: 'Completed',
-    observations: '624 obs',
-    netReturn: '+0.84%',
+    status: 'Template',
+    observations: 'Template only',
+    netReturn: '—',
     holdingDays: '5d',
-    lastModified: '5 days ago',
-    actionText: 'View findings'
+    lastModified: 'Template',
+    actionText: 'Use template',
+    canResume: true
   }
 ];
 

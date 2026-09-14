@@ -65,255 +65,249 @@ def test_nifty_mean_reversion(df: pd.DataFrame) -> dict:
   };
 
   return (
-    <div className="flex flex-col w-full pb-16">
-      {/* Top Command & Specifier Bar */}
-      <section className="w-full bg-surface-container-lowest shadow-xs border-b border-outline-variant/30 px-margin py-space-md mb-space-md">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-space-md max-w-7xl mx-auto">
-          {/* Context & Titles */}
-          <div className="flex flex-col gap-space-xs min-w-0">
-            <div className="flex items-center gap-space-xs font-label-code text-label-code text-on-surface-variant truncate">
-              <button 
-                onClick={() => goToPhase('ask')}
-                className="hover:text-on-surface transition-colors cursor-pointer"
-              >
-                Experiments
-              </button>
-              <span className="text-outline">/</span>
-              <span className="text-on-surface font-semibold bg-surface-container-low px-1.5 py-0.5 rounded-DEFAULT">
-                {experiment.id}
-              </span>
-              <span className="text-outline">/</span>
-              <span className="text-outline">Full Report &amp; Provenance Spec</span>
-            </div>
+    <div className="min-h-screen bg-[#CBD6E6] text-[#111111] pb-16 font-sans">
+      {/* Subheader Tracker Ribbon */}
+      <div className="w-full bg-white border-b border-[#E5EAF1] px-4 sm:px-6 py-2.5 shadow-xs">
+        <div className="max-w-6xl mx-auto flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => goToPhase('learn')}
+              className="text-[#667085] hover:text-[#111111] font-medium transition-colors cursor-pointer"
+            >
+              ← Back to Learn
+            </button>
+            <span className="text-[#CBD6E6]">|</span>
+            <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#E8F1FD] text-[#2879F2] font-semibold">
+              Experiment Report
+            </span>
+            <span className="text-[#667085] font-medium">Complete Provenance &amp; Verification Audit</span>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-[#667085]">
+            <span className="w-2 h-2 rounded-full bg-[#08B878]"></span>
+            <span>Study ID: {experiment.id}</span>
+          </div>
+        </div>
+      </div>
 
-            <div className="flex flex-wrap items-center gap-space-md">
-              <h1 className="font-headline-lg text-headline-lg text-on-surface tracking-tight font-semibold">
-                {experiment.title}
-              </h1>
-              <span className="inline-flex items-center gap-space-xs bg-tertiary-fixed text-on-tertiary-fixed font-label-caps text-label-caps px-space-sm py-0.5 rounded-DEFAULT font-semibold">
-                <span className="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
-                COMPLETED · REPRODUCIBLE SNAPSHOT LOCKED
+      <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+        {/* Top Header Card */}
+        <section className="w-full bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-[#E5EAF1] flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+          <div className="space-y-3 max-w-2xl">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#E6F8F1] text-[#08B878] uppercase tracking-wider">
+                COMPLETED · EXPERIMENT REPORT
               </span>
+              <span className="text-xs text-[#667085]">•</span>
+              <span className="text-xs text-[#667085]">{experiment.market} ({experiment.dataPeriod})</span>
             </div>
-
-            <div className="flex items-center gap-space-md font-label-code text-label-code text-on-surface-variant flex-wrap">
-              <span>Engine: <strong className="text-on-surface font-normal">SignalLab Core v2.4</strong></span>
-              <span className="text-outline">•</span>
-              <span>Universe: <span className="font-label-numeric text-label-numeric text-on-surface">{experiment.market}</span></span>
-              <span className="text-outline">•</span>
-              <span>Horizon: <span className="font-label-numeric text-label-numeric text-on-surface">{experiment.dataPeriod}</span></span>
-              <span className="text-outline">•</span>
-              <span className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-[13px] text-tertiary">lock</span> Read-Only Provenance Archive
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#111111]">
+              {experiment.originalQuestion || experiment.title}
+            </h1>
+            <div className="flex items-center gap-3 text-xs text-[#667085] flex-wrap">
+              <span>Engine: <strong className="text-[#111111] font-medium">SignalLab Core v2.4</strong></span>
+              <span>•</span>
+              <span>Universe: <strong className="text-[#111111] font-medium">{experiment.market}</strong></span>
+              <span>•</span>
+              <span>Timeframe: <strong className="text-[#111111] font-medium">{experiment.dataPeriod}</strong></span>
+              <span>•</span>
+              <span className="flex items-center gap-1 text-[#08B878] font-medium">
+                ✓ Locked Provenance Spec
               </span>
             </div>
           </div>
 
           {/* Action Group */}
-          <div className="flex flex-wrap items-center gap-space-xs shrink-0 self-start lg:self-center">
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0 self-start lg:self-center">
             <button
               onClick={() => forkInvestigation(experiment.nextInvestigations[0])}
-              className="h-8 px-space-md bg-surface-container-low text-on-surface hover:bg-surface-container font-body-sm text-body-sm rounded-DEFAULT flex items-center gap-space-xs transition-colors shadow-xs border border-outline-variant/30 cursor-pointer"
+              className="px-4 py-2 bg-white text-[#111111] hover:bg-[#F8FAFC] text-xs font-semibold rounded-xl border border-[#E5EAF1] shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
               type="button"
             >
-              <span className="material-symbols-outlined text-[15px]">fork_right</span>
+              <span>⇄</span>
               <span>Fork Experiment</span>
             </button>
 
             <button
               onClick={handleExportJson}
-              className="h-8 px-space-md bg-surface-container-low text-on-surface hover:bg-surface-container font-body-sm text-body-sm rounded-DEFAULT flex items-center gap-space-xs transition-colors shadow-xs border border-outline-variant/30 cursor-pointer"
+              className="px-4 py-2 bg-white text-[#111111] hover:bg-[#F8FAFC] text-xs font-semibold rounded-xl border border-[#E5EAF1] shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
               type="button"
             >
-              <span className="material-symbols-outlined text-[15px]">data_object</span>
+              <span>{`{ }`}</span>
               <span>Export JSON Spec</span>
             </button>
 
             <button
               onClick={() => window.print()}
-              className="h-8 px-space-md bg-primary text-on-primary hover:bg-inverse-surface font-body-sm text-body-sm rounded-DEFAULT flex items-center gap-space-xs transition-colors shadow-xs cursor-pointer"
+              className="px-4 py-2 bg-[#111111] text-white hover:bg-black text-xs font-semibold rounded-xl shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
               type="button"
             >
-              <span className="material-symbols-outlined text-[15px]">print</span>
-              <span>Print Research Brief</span>
+              <span>⎙</span>
+              <span>Print Report</span>
             </button>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Core Body */}
-      <div className="px-margin flex flex-col gap-space-lg w-full max-w-7xl mx-auto">
         {/* Stepped Lifecycle Transformation Track */}
-        <div className="w-full bg-surface-container-lowest shadow-xs border border-outline-variant/30 rounded-DEFAULT p-space-lg overflow-x-auto">
-          <div className="flex items-center justify-between pb-space-sm mb-space-md bg-surface-container-low px-space-md py-space-xs rounded-DEFAULT border border-outline-variant/20">
-            <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider font-semibold">
-              Hypothesis Audit Lineage (Ask → Clarify → Define → Test → Learn)
+        <section className="w-full bg-white p-6 rounded-2xl shadow-sm border border-[#E5EAF1] space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#E5EAF1]">
+            <span className="text-xs font-bold text-[#111111] uppercase tracking-wider">
+              Research Lifecycle Audit (Ask → Clarify → Define → Test → Learn)
             </span>
-            <span className="font-label-code text-label-code text-outline">
-              LATENCY: 412ms · ALL 5 PHASES SEALED
+            <span className="text-xs text-[#08B878] font-semibold bg-[#E6F8F1] px-2.5 py-0.5 rounded-full">
+              ALL 5 PHASES VERIFIED
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-space-sm min-w-[760px]">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
             {/* Phase 01 */}
             <div 
               onClick={() => goToPhase('ask')}
-              className="bg-surface-container-low p-space-md rounded-DEFAULT flex flex-col gap-space-xs relative border border-outline-variant/20 cursor-pointer hover:bg-surface-container transition-colors"
+              className="bg-[#F8FAFC] p-3.5 rounded-xl flex flex-col gap-1.5 border border-[#E5EAF1] cursor-pointer hover:border-[#2879F2] hover:bg-[#E8F1FD]/30 transition-all"
             >
               <div className="flex items-center justify-between">
-                <span className="font-label-numeric text-label-numeric font-semibold text-on-surface">01 · ASK</span>
-                <span className="material-symbols-outlined text-[16px] text-tertiary">check_circle</span>
+                <span className="text-xs font-bold text-[#111111]">01 · ASK</span>
+                <span className="text-xs text-[#08B878] font-bold">✓</span>
               </div>
-              <p className="font-headline-sm text-[13px] text-on-surface line-clamp-2">
-                “{experiment.originalQuestion}”
+              <p className="text-xs text-[#111111] line-clamp-2 font-medium">
+                "{experiment.originalQuestion}"
               </p>
-              <span className="font-label-code text-label-code text-outline mt-auto">Raw Natural Query</span>
+              <span className="text-[11px] text-[#667085] mt-auto">Initial Query</span>
             </div>
 
             {/* Phase 02 */}
             <div 
               onClick={() => goToPhase('clarify')}
-              className="bg-surface-container-low p-space-md rounded-DEFAULT flex flex-col gap-space-xs relative border border-outline-variant/20 cursor-pointer hover:bg-surface-container transition-colors"
+              className="bg-[#F8FAFC] p-3.5 rounded-xl flex flex-col gap-1.5 border border-[#E5EAF1] cursor-pointer hover:border-[#2879F2] hover:bg-[#E8F1FD]/30 transition-all"
             >
               <div className="flex items-center justify-between">
-                <span className="font-label-numeric text-label-numeric font-semibold text-on-surface">02 · CLARIFY</span>
-                <span className="material-symbols-outlined text-[16px] text-tertiary">check_circle</span>
+                <span className="text-xs font-bold text-[#111111]">02 · CLARIFY</span>
+                <span className="text-xs text-[#08B878] font-bold">✓</span>
               </div>
-              <p className="font-body-sm text-body-sm text-on-surface">
-                {((experiment.threshold || 0.05) * 100).toFixed(1)}% 1-day decline · {experiment.entryTiming === 'SAME_DAY_CLOSE' ? 'Same-day market entry' : 'Next-session market entry'} · {experiment.holdingDays || 5}-day time-based holding
+              <p className="text-xs text-[#111111] font-medium">
+                {((experiment.threshold || 0.05) * 100).toFixed(1)}% drop · {experiment.entryTiming === 'SAME_DAY_CLOSE' ? 'Same-day' : 'Next open'} · {experiment.holdingDays || 5}d
               </p>
-              <span className="font-label-code text-label-code text-outline mt-auto">Ambiguity Resolved</span>
+              <span className="text-[11px] text-[#667085] mt-auto">Assumptions Locked</span>
             </div>
 
             {/* Phase 03 */}
             <div 
               onClick={() => goToPhase('define')}
-              className="bg-surface-container-low p-space-md rounded-DEFAULT flex flex-col gap-space-xs relative border border-outline-variant/20 cursor-pointer hover:bg-surface-container transition-colors"
+              className="bg-[#F8FAFC] p-3.5 rounded-xl flex flex-col gap-1.5 border border-[#E5EAF1] cursor-pointer hover:border-[#2879F2] hover:bg-[#E8F1FD]/30 transition-all"
             >
               <div className="flex items-center justify-between">
-                <span className="font-label-numeric text-label-numeric font-semibold text-on-surface">03 · DEFINE</span>
-                <span className="material-symbols-outlined text-[16px] text-tertiary">check_circle</span>
+                <span className="text-xs font-bold text-[#111111]">03 · DEFINE</span>
+                <span className="text-xs text-[#08B878] font-bold">✓</span>
               </div>
-              <p className="font-body-sm text-body-sm text-on-surface">
-                {experiment.market} · {experiment.dataPeriod} · {((experiment.transactionCost || 0.001) * 100).toFixed(2)}% friction · FIFO non-overlapping
+              <p className="text-xs text-[#111111] font-medium">
+                {experiment.market} · {((experiment.transactionCost || 0.001) * 100).toFixed(2)}% fee · Non-overlapping
               </p>
-              <span className="font-label-code text-label-code text-outline mt-auto">Execution Vector</span>
+              <span className="text-[11px] text-[#667085] mt-auto">Execution Spec</span>
             </div>
 
             {/* Phase 04 */}
             <div 
               onClick={() => goToPhase('test')}
-              className="bg-surface-container-low p-space-md rounded-DEFAULT flex flex-col gap-space-xs relative border border-outline-variant/20 cursor-pointer hover:bg-surface-container transition-colors"
+              className="bg-[#F8FAFC] p-3.5 rounded-xl flex flex-col gap-1.5 border border-[#E5EAF1] cursor-pointer hover:border-[#2879F2] hover:bg-[#E8F1FD]/30 transition-all"
             >
               <div className="flex items-center justify-between">
-                <span className="font-label-numeric text-label-numeric font-semibold text-on-surface">04 · TEST</span>
-                <span className="material-symbols-outlined text-[16px] text-tertiary">check_circle</span>
+                <span className="text-xs font-bold text-[#111111]">04 · TEST</span>
+                <span className="text-xs text-[#08B878] font-bold">✓</span>
               </div>
-              <p className="font-body-sm text-body-sm text-on-surface">
-                {results.sampleSize.toLocaleString()} qualifying observations validated · 0 lookahead errors
+              <p className="text-xs text-[#111111] font-medium">
+                {results.sampleSize} events analyzed · 4 safeguards
               </p>
-              <span className="font-label-code text-label-code text-on-tertiary-container font-medium mt-auto">
-                Integrity Pass: 100%
-              </span>
+              <span className="text-[11px] text-[#08B878] font-semibold mt-auto">All Passed</span>
             </div>
 
             {/* Phase 05 */}
             <div 
               onClick={() => goToPhase('learn')}
-              className="bg-primary text-on-primary p-space-md rounded-DEFAULT flex flex-col gap-space-xs relative cursor-pointer hover:opacity-95 transition-opacity"
+              className="bg-[#111111] text-white p-3.5 rounded-xl flex flex-col gap-1.5 cursor-pointer hover:bg-black transition-all"
             >
               <div className="flex items-center justify-between">
-                <span className="font-label-numeric text-label-numeric font-semibold text-on-primary">05 · LEARN</span>
-                <span className="material-symbols-outlined text-[16px] text-tertiary-fixed">verified</span>
+                <span className="text-xs font-bold text-white">05 · LEARN</span>
+                <span className="text-xs text-[#08B878] font-bold">✓</span>
               </div>
-              <p className="font-body-sm text-body-sm text-on-primary">
-                +{results.averageNetReturn}% net return · {results.evidenceLevel} · Right-tail skew
+              <p className="text-xs text-white font-medium">
+                +{results.averageNetReturn}% net return · {Number(results.pValue) < 0.05 ? 'p < 0.05' : 'p ≥ 0.05 (Not Sig.)'}
               </p>
-              <span className="font-label-code text-label-code text-outline-variant mt-auto">
-                Empirical Evaluation
-              </span>
+              <span className="text-[11px] text-[#CBD6E6] mt-auto">Final Evaluation</span>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Tab Bar Controller */}
-        <div className="w-full bg-surface-container-lowest shadow-xs border border-outline-variant/30 rounded-DEFAULT p-space-xs flex items-center justify-between overflow-x-auto">
-          <div className="flex items-center gap-space-xs min-w-max">
+        {/* Tab Navigation Pill Bar */}
+        <div className="w-full bg-white p-2 rounded-2xl shadow-sm border border-[#E5EAF1] flex items-center justify-between overflow-x-auto gap-2">
+          <div className="flex items-center gap-1.5 min-w-max">
             <button
               onClick={() => setActiveTab('assumptions')}
-              className={`px-space-md py-space-xs font-body-sm text-body-sm rounded-DEFAULT flex items-center gap-space-xs cursor-pointer transition-colors ${
+              className={`px-4 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${
                 activeTab === 'assumptions'
-                  ? 'bg-surface-container font-semibold text-on-surface shadow-xs'
-                  : 'text-on-surface-variant hover:bg-surface-container-low'
+                  ? 'bg-[#111111] text-white shadow-xs'
+                  : 'text-[#667085] hover:text-[#111111] hover:bg-[#F8FAFC]'
               }`}
               type="button"
             >
-              <span className="material-symbols-outlined text-[16px]">account_tree</span>
-              <span>Assumptions &amp; Provenance</span>
-              <span className="font-label-code text-label-code bg-surface-container-highest px-1 rounded-DEFAULT">
-                Primary
-              </span>
+              Assumptions &amp; Choices
             </button>
 
             <button
               onClick={() => setActiveTab('stats')}
-              className={`px-space-md py-space-xs font-body-sm text-body-sm rounded-DEFAULT flex items-center gap-space-xs cursor-pointer transition-colors ${
+              className={`px-4 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${
                 activeTab === 'stats'
-                  ? 'bg-surface-container font-semibold text-on-surface shadow-xs'
-                  : 'text-on-surface-variant hover:bg-surface-container-low'
+                  ? 'bg-[#111111] text-white shadow-xs'
+                  : 'text-[#667085] hover:text-[#111111] hover:bg-[#F8FAFC]'
               }`}
               type="button"
             >
-              <span className="material-symbols-outlined text-[16px]">equalizer</span>
-              <span>Statistical Moments</span>
+              Detailed Numbers
             </button>
 
             <button
               onClick={() => setActiveTab('regimes')}
-              className={`px-space-md py-space-xs font-body-sm text-body-sm rounded-DEFAULT flex items-center gap-space-xs cursor-pointer transition-colors ${
+              className={`px-4 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeTab === 'regimes'
-                  ? 'bg-surface-container font-semibold text-on-surface shadow-xs'
-                  : 'text-on-surface-variant hover:bg-surface-container-low'
+                  ? 'bg-[#111111] text-white shadow-xs'
+                  : 'text-[#667085] hover:text-[#111111] hover:bg-[#F8FAFC]'
               }`}
               type="button"
             >
-              <span className="material-symbols-outlined text-[16px]">stacked_bar_chart</span>
-              <span>Market Regimes</span>
-              <span className="font-label-caps text-label-caps bg-error-container text-on-error-container px-1 py-0.2 rounded-DEFAULT font-bold">
-                1 Alert
+              <span>Market Environment</span>
+              <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                activeTab === 'regimes' ? 'bg-[#FF4A2D] text-white' : 'bg-[#FEECE9] text-[#FF4A2D]'
+              }`}>
+                Key Split
               </span>
             </button>
 
             <button
               onClick={() => setActiveTab('limitations')}
-              className={`px-space-md py-space-xs font-body-sm text-body-sm rounded-DEFAULT flex items-center gap-space-xs cursor-pointer transition-colors ${
+              className={`px-4 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${
                 activeTab === 'limitations'
-                  ? 'bg-surface-container font-semibold text-on-surface shadow-xs'
-                  : 'text-on-surface-variant hover:bg-surface-container-low'
+                  ? 'bg-[#111111] text-white shadow-xs'
+                  : 'text-[#667085] hover:text-[#111111] hover:bg-[#F8FAFC]'
               }`}
               type="button"
             >
-              <span className="material-symbols-outlined text-[16px]">warning</span>
-              <span>Limitations &amp; Risks</span>
+              Important Limits
             </button>
 
             <button
               onClick={() => setActiveTab('code')}
-              className={`px-space-md py-space-xs font-body-sm text-body-sm rounded-DEFAULT flex items-center gap-space-xs cursor-pointer transition-colors ${
+              className={`px-4 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${
                 activeTab === 'code'
-                  ? 'bg-surface-container font-semibold text-on-surface shadow-xs'
-                  : 'text-on-surface-variant hover:bg-surface-container-low'
+                  ? 'bg-[#111111] text-white shadow-xs'
+                  : 'text-[#667085] hover:text-[#111111] hover:bg-[#F8FAFC]'
               }`}
               type="button"
             >
-              <span className="material-symbols-outlined text-[16px]">code</span>
-              <span>Python / SQL Recipe</span>
+              Python Code
             </button>
           </div>
 
-          <div className="hidden xl:flex items-center gap-space-md px-space-md font-label-code text-label-code text-on-surface-variant shrink-0">
-            <span className="text-outline">SPEC_REV:</span>
-            <span className="bg-surface-container-low px-1.5 py-0.5 rounded-DEFAULT text-on-surface">
+          <div className="hidden xl:flex items-center gap-2 px-3 text-xs text-[#667085] shrink-0 font-mono">
+            <span>HASH:</span>
+            <span className="bg-[#F8FAFC] px-2 py-0.5 rounded border border-[#E5EAF1] text-[#111111]">
               {experiment.specHash}
             </span>
           </div>
@@ -321,221 +315,218 @@ def test_nifty_mean_reversion(df: pd.DataFrame) -> dict:
 
         {/* Tab 1: Assumptions & Provenance Audit */}
         {activeTab === 'assumptions' && (
-          <div className="flex flex-col gap-space-lg w-full">
+          <div className="space-y-6">
             {/* KPI Metric Tiles */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-space-md">
-              <div className="bg-surface-container-lowest shadow-xs border border-outline-variant/30 p-space-md rounded-DEFAULT flex flex-col justify-between">
-                <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider font-semibold">
-                  Sample Space (N)
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E5EAF1] flex flex-col justify-between">
+                <span className="text-xs font-semibold text-[#667085] uppercase tracking-wider">
+                  Qualifying Drops
                 </span>
-                <div className="my-space-xs flex items-baseline gap-space-xs">
-                  <span className="font-headline-lg text-headline-lg font-label-numeric text-on-surface font-semibold">
+                <div className="my-2 flex items-baseline gap-2">
+                  <span className="text-3xl font-bold text-[#111111]">
                     {results.sampleSize.toLocaleString()}
                   </span>
-                  <span className="font-label-code text-label-code text-outline">qualifying events</span>
+                  <span className="text-xs text-[#667085]">events</span>
                 </div>
-                <div className="bg-surface-container-low px-space-xs py-0.5 rounded-DEFAULT text-on-surface-variant font-label-code text-label-code truncate">
+                <div className="text-xs text-[#667085] bg-[#F8FAFC] px-2 py-1 rounded-lg border border-[#E5EAF1] truncate">
                   {experiment.datasetName}
                 </div>
               </div>
 
-              <div className="bg-surface-container-lowest shadow-xs border border-outline-variant/30 p-space-md rounded-DEFAULT flex flex-col justify-between">
-                <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider font-semibold">
-                  Base Expected Return
+              <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E5EAF1] flex flex-col justify-between">
+                <span className="text-xs font-semibold text-[#667085] uppercase tracking-wider">
+                  Average Net Return
                 </span>
-                <div className="my-space-xs flex items-baseline gap-space-xs">
-                  <span className="font-headline-lg text-headline-lg font-label-numeric text-on-tertiary-container font-semibold">
+                <div className="my-2 flex items-baseline gap-2">
+                  <span className="text-3xl font-bold text-[#08B878]">
                     +{results.averageNetReturn}%
                   </span>
-                  <span className="font-label-code text-label-code text-outline">net/trade</span>
+                  <span className="text-xs text-[#667085]">net per trade</span>
                 </div>
-                <div className="bg-surface-container-low px-space-xs py-0.5 rounded-DEFAULT text-on-surface-variant font-label-code text-label-code truncate">
-                  Gross: +{results.averageGrossReturn}% · Friction: {((experiment.transactionCost || 0.001) * 100).toFixed(2)}%
+                <div className="text-xs text-[#667085] bg-[#F8FAFC] px-2 py-1 rounded-lg border border-[#E5EAF1] truncate">
+                  Gross: +{results.averageGrossReturn}% · Fee: {((experiment.transactionCost || 0.001) * 100).toFixed(2)}%
                 </div>
               </div>
 
-              <div className="bg-surface-container-lowest shadow-xs border border-outline-variant/30 p-space-md rounded-DEFAULT flex flex-col justify-between">
-                <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider font-semibold">
-                  Hypothesis T-Statistic
+              <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E5EAF1] flex flex-col justify-between">
+                <span className="text-xs font-semibold text-[#667085] uppercase tracking-wider">
+                  STATISTICAL TEST
                 </span>
-                <div className="my-space-xs flex items-baseline gap-space-xs">
-                  <span className="font-headline-lg text-headline-lg font-label-numeric text-on-surface font-semibold">
-                    {results.tStatistic}
-                  </span>
-                  <span className="font-label-code text-label-code text-on-tertiary-container font-semibold">
+                <div className="my-2 flex items-baseline gap-2">
+                  <span className="text-2xl font-bold text-[#111111]">
                     p = {results.pValue}
                   </span>
+                  <span className="text-xs text-[#667085]">
+                    t = {results.tStatistic}
+                  </span>
                 </div>
-                <div className="bg-surface-container-low px-space-xs py-0.5 rounded-DEFAULT text-on-surface-variant font-label-code text-label-code truncate">
-                  {results.evidenceLevel}
+                <div className="text-xs text-[#667085] bg-[#F8FAFC] px-2 py-1 rounded-lg border border-[#E5EAF1] truncate">
+                  Not statistically significant (p ≥ 0.05)
                 </div>
               </div>
 
-              <div className="bg-surface-container-lowest shadow-xs border border-outline-variant/30 p-space-md rounded-DEFAULT flex flex-col justify-between">
-                <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider font-semibold">
-                  Regime Skew Ratio
+              <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E5EAF1] flex flex-col justify-between">
+                <span className="text-xs font-semibold text-[#667085] uppercase tracking-wider">
+                  Market Environment Split
                 </span>
-                <div className="my-space-xs flex items-baseline gap-space-xs">
-                  <span className={`font-headline-lg text-headline-lg font-label-numeric font-semibold ${
-                    (results.regimes?.bear.averageNetReturn ?? 0) < 0 ? 'text-error' : 'text-on-tertiary-container'
+                <div className="my-2 flex items-baseline gap-2">
+                  <span className={`text-2xl font-bold ${
+                    (results.regimes?.bear.averageNetReturn ?? 0) < 0 ? 'text-[#FF4A2D]' : 'text-[#08B878]'
                   }`}>
                     {(results.regimes?.bear.averageNetReturn ?? 0) < (results.regimes?.bull.averageNetReturn ?? 0) ? 'Bull-Skewed' : 'Balanced'}
                   </span>
                 </div>
-                <div className={`px-space-xs py-0.5 rounded-DEFAULT font-label-code text-label-code truncate font-medium ${
-                  (results.regimes?.bear.averageNetReturn ?? 0) < 0 ? 'bg-error-container text-on-error-container' : 'bg-surface-container-low text-on-surface-variant'
+                <div className={`text-xs px-2 py-1 rounded-lg border truncate font-medium ${
+                  (results.regimes?.bear.averageNetReturn ?? 0) < 0 
+                    ? 'bg-[#FEECE9] text-[#FF4A2D] border-[#FF4A2D]/20' 
+                    : 'bg-[#F8FAFC] text-[#667085] border-[#E5EAF1]'
                 }`}>
-                  Bear Net Return: {results.regimes ? `${results.regimes.bear.averageNetReturn >= 0 ? '+' : ''}${results.regimes.bear.averageNetReturn}%` : 'N/A'}
+                  Bear Net: {results.regimes ? `${results.regimes.bear.averageNetReturn >= 0 ? '+' : ''}${results.regimes.bear.averageNetReturn}%` : 'N/A'}
                 </div>
               </div>
             </div>
 
             {/* Provenance Audit Table */}
-            <div className="bg-surface-container-lowest shadow-xs border border-outline-variant/30 rounded-DEFAULT overflow-hidden">
-              <div className="px-space-lg py-space-md bg-surface-container-low flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs border-b border-outline-variant/30">
+            <div className="bg-white rounded-2xl shadow-sm border border-[#E5EAF1] overflow-hidden">
+              <div className="p-5 sm:p-6 border-b border-[#E5EAF1] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#F8FAFC]">
                 <div>
-                  <h2 className="font-headline-sm text-headline-sm text-on-surface font-semibold">
-                    System Assumptions &amp; Provenance Audit
+                  <h2 className="text-base font-bold text-[#111111]">
+                    Every Assumption Confirmed for This Test
                   </h2>
-                  <p className="font-body-sm text-body-sm text-on-surface-variant">
-                    Deterministic mapping between natural prompts, AI inferences, confirmed specifications, and test impact.
+                  <p className="text-xs text-[#667085] mt-0.5">
+                    How each casual phrase in your question was converted into an exact, testable rule.
                   </p>
                 </div>
-                <div className="flex items-center gap-space-xs font-label-code text-label-code">
-                  <span className="w-2 h-2 rounded-full bg-on-tertiary-container"></span>
-                  <span className="text-on-surface font-semibold">5 of 5 confirmed</span>
+                <div className="flex items-center gap-2 text-xs font-semibold text-[#08B878] bg-[#E6F8F1] px-3 py-1 rounded-full w-fit">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#08B878]"></span>
+                  <span>5 of 5 assumptions confirmed</span>
                 </div>
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-left font-body-md text-body-md">
+                <table className="w-full text-left text-xs">
                   <thead>
-                    <tr className="bg-surface-container font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider border-b border-surface-container">
-                      <th className="py-space-sm px-space-lg">Parameter Vector</th>
-                      <th className="py-space-sm px-space-md">Initial User Prompt</th>
-                      <th className="py-space-sm px-space-md">AI Inferred Setting</th>
-                      <th className="py-space-sm px-space-md">User Confirmed Setting</th>
-                      <th className="py-space-sm px-space-lg text-right">System Alpha Impact</th>
+                    <tr className="bg-white text-[#667085] font-semibold border-b border-[#E5EAF1]">
+                      <th className="py-3 px-5">What We Needed to Decide</th>
+                      <th className="py-3 px-4">What You First Asked</th>
+                      <th className="py-3 px-4">Standard Setting</th>
+                      <th className="py-3 px-4">Your Confirmed Choice</th>
+                      <th className="py-3 px-5 text-right">Why This Matters</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-surface-container-low font-label-code text-label-code">
-                    <tr className="hover:bg-surface-container-low transition-colors">
-                      <td className="py-space-md px-space-lg font-semibold text-on-surface">
-                        Trigger Event
-                        <span className="block font-body-sm text-body-sm text-outline font-normal">T_WINDOW</span>
+                  <tbody className="divide-y divide-[#E5EAF1] text-[#111111]">
+                    <tr className="hover:bg-[#F8FAFC] transition-colors">
+                      <td className="py-3.5 px-5 font-semibold">
+                        What counts as a sharp fall?
+                        <span className="block text-[11px] text-[#667085] font-normal">TRIGGER CONDITION</span>
                       </td>
-                      <td className="py-space-md px-space-md text-on-surface-variant font-body-sm text-body-sm">
+                      <td className="py-3.5 px-4 text-[#667085]">
                         "sharp fall"
                       </td>
-                      <td className="py-space-md px-space-md">
-                        <span className="inline-block px-1.5 py-0.5 rounded-DEFAULT bg-surface-container text-on-surface-variant">
-                          Close-to-Close ≤ -{((experiment.threshold || 0.05) * 100).toFixed(1)}%
+                      <td className="py-3.5 px-4">
+                        <span className="px-2 py-0.5 rounded bg-[#F8FAFC] border border-[#E5EAF1] text-[#667085]">
+                          Drop of at least {((experiment.threshold || 0.05) * 100).toFixed(1)}%
                         </span>
                       </td>
-                      <td className="py-space-md px-space-md">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-DEFAULT bg-surface-container-highest text-on-surface font-semibold">
-                          <span className="material-symbols-outlined text-[13px] text-tertiary">done</span>
-                          {experiment.market} -{((experiment.threshold || 0.05) * 100).toFixed(2)}% 1-Day
+                      <td className="py-3.5 px-4">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#E8F1FD] text-[#2879F2] font-semibold">
+                          ✓ {experiment.market} -{((experiment.threshold || 0.05) * 100).toFixed(1)}%
                         </span>
                       </td>
-                      <td className="py-space-md px-space-lg text-right font-label-numeric text-label-numeric text-on-surface">
-                        Filters 97.4% non-events
+                      <td className="py-3.5 px-5 text-right text-[#667085]">
+                        Filters normal market noise; finds {results.sampleSize} drops
                       </td>
                     </tr>
 
-                    <tr className="hover:bg-surface-container-low transition-colors">
-                      <td className="py-space-md px-space-lg font-semibold text-on-surface">
-                        Execution Timing
-                        <span className="block font-body-sm text-body-sm text-outline font-normal">EXEC_LATENCY</span>
+                    <tr className="hover:bg-[#F8FAFC] transition-colors">
+                      <td className="py-3.5 px-5 font-semibold">
+                        When would we buy?
+                        <span className="block text-[11px] text-[#667085] font-normal">TRADE ENTRY RULE</span>
                       </td>
-                      <td className="py-space-md px-space-md text-on-surface-variant font-body-sm text-body-sm">
+                      <td className="py-3.5 px-4 text-[#667085]">
                         "buying after"
                       </td>
-                      <td className="py-space-md px-space-md">
-                        <span className="inline-block px-1.5 py-0.5 rounded-DEFAULT bg-surface-container text-on-surface-variant">
-                          Immediate close or next open
+                      <td className="py-3.5 px-4">
+                        <span className="px-2 py-0.5 rounded bg-[#F8FAFC] border border-[#E5EAF1] text-[#667085]">
+                          Next market open
                         </span>
                       </td>
-                      <td className="py-space-md px-space-md">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-DEFAULT bg-surface-container-highest text-on-surface font-semibold">
-                          <span className="material-symbols-outlined text-[13px] text-tertiary">done</span>
-                          {experiment.entryTiming === 'SAME_DAY_CLOSE' ? 'T Session Close (MKT)' : 'T+1 Session Open (MKT)'}
+                      <td className="py-3.5 px-4">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#E8F1FD] text-[#2879F2] font-semibold">
+                          ✓ {experiment.entryTiming === 'SAME_DAY_CLOSE' ? 'Same-day close (T Close)' : 'Next market open (T+1 Open)'}
                         </span>
                       </td>
-                      <td className="py-space-md px-space-lg text-right font-label-numeric text-label-numeric text-error">
-                        Avoids close slippage (-0.08%)
+                      <td className="py-3.5 px-5 text-right text-[#667085]">
+                        Gives a realistic, executable price
                       </td>
                     </tr>
 
-                    <tr className="hover:bg-surface-container-low transition-colors">
-                      <td className="py-space-md px-space-lg font-semibold text-on-surface">
-                        Holding Period
-                        <span className="block font-body-sm text-body-sm text-outline font-normal">HOLD_DURATION</span>
+                    <tr className="hover:bg-[#F8FAFC] transition-colors">
+                      <td className="py-3.5 px-5 font-semibold">
+                        How long should we stay invested?
+                        <span className="block text-[11px] text-[#667085] font-normal">HOLDING PERIOD</span>
                       </td>
-                      <td className="py-space-md px-space-md text-on-surface-variant font-body-sm text-body-sm">
+                      <td className="py-3.5 px-4 text-[#667085]">
                         "does it work?" (unspecified)
                       </td>
-                      <td className="py-space-md px-space-md">
-                        <span className="inline-block px-1.5 py-0.5 rounded-DEFAULT bg-surface-container text-on-surface-variant">
+                      <td className="py-3.5 px-4">
+                        <span className="px-2 py-0.5 rounded bg-[#F8FAFC] border border-[#E5EAF1] text-[#667085]">
                           Default 5-Day Swing
                         </span>
                       </td>
-                      <td className="py-space-md px-space-md">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-DEFAULT bg-surface-container-highest text-on-surface font-semibold">
-                          <span className="material-symbols-outlined text-[13px] text-tertiary">done</span>
-                          {experiment.holdingDays || 5} Trading Sessions Flat
+                      <td className="py-3.5 px-4">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#E8F1FD] text-[#2879F2] font-semibold">
+                          ✓ {experiment.holdingDays || 5} Trading Sessions Flat
                         </span>
                       </td>
-                      <td className="py-space-md px-space-lg text-right font-label-numeric text-label-numeric text-on-tertiary-container font-semibold">
-                        Peak mean reversion apex
+                      <td className="py-3.5 px-5 text-right text-[#08B878] font-medium">
+                        Measures the short-term rebound window
                       </td>
                     </tr>
 
-                    <tr className="hover:bg-surface-container-low transition-colors">
-                      <td className="py-space-md px-space-lg font-semibold text-on-surface">
-                        Friction &amp; Slippage
-                        <span className="block font-body-sm text-body-sm text-outline font-normal">TOTAL_DRAG</span>
+                    <tr className="hover:bg-[#F8FAFC] transition-colors">
+                      <td className="py-3.5 px-5 font-semibold">
+                        What does trading cost us?
+                        <span className="block text-[11px] text-[#667085] font-normal">TRADING COSTS</span>
                       </td>
-                      <td className="py-space-md px-space-md text-on-surface-variant font-body-sm text-body-sm">
+                      <td className="py-3.5 px-4 text-[#667085]">
                         Not stated
                       </td>
-                      <td className="py-space-md px-space-md">
-                        <span className="inline-block px-1.5 py-0.5 rounded-DEFAULT bg-surface-container text-on-surface-variant">
+                      <td className="py-3.5 px-4">
+                        <span className="px-2 py-0.5 rounded bg-[#F8FAFC] border border-[#E5EAF1] text-[#667085]">
                           Zero frictionless baseline
                         </span>
                       </td>
-                      <td className="py-space-md px-space-md">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-DEFAULT bg-surface-container-highest text-on-surface font-semibold">
-                          <span className="material-symbols-outlined text-[13px] text-tertiary">done</span>
-                          {((experiment.transactionCost || 0.001) * 10000).toFixed(0)} bps total (STT+Brokerage+Impact)
+                      <td className="py-3.5 px-4">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#E8F1FD] text-[#2879F2] font-semibold">
+                          ✓ {((experiment.transactionCost || 0.001) * 10000).toFixed(0)} bps ({((experiment.transactionCost || 0.001) * 100).toFixed(2)}%)
                         </span>
                       </td>
-                      <td className="py-space-md px-space-lg text-right font-label-numeric text-label-numeric text-outline font-medium">
-                        -{((experiment.transactionCost || 0.001) * 100).toFixed(2)}% gross-to-net penalty
+                      <td className="py-3.5 px-5 text-right text-[#667085]">
+                        -{((experiment.transactionCost || 0.001) * 100).toFixed(2)}% fee deducted per trade
                       </td>
                     </tr>
 
-                    <tr className="hover:bg-surface-container-low transition-colors">
-                      <td className="py-space-md px-space-lg font-semibold text-on-surface">
-                        Data Universe
-                        <span className="block font-body-sm text-body-sm text-outline font-normal">UNIVERSE_ID</span>
+                    <tr className="hover:bg-[#F8FAFC] transition-colors">
+                      <td className="py-3.5 px-5 font-semibold">
+                        What dataset are we studying?
+                        <span className="block text-[11px] text-[#667085] font-normal">HISTORICAL DATASET</span>
                       </td>
-                      <td className="py-space-md px-space-md text-on-surface-variant font-body-sm text-body-sm">
+                      <td className="py-3.5 px-4 text-[#667085]">
                         "NIFTY"
                       </td>
-                      <td className="py-space-md px-space-md">
-                        <span className="inline-block px-1.5 py-0.5 rounded-DEFAULT bg-surface-container text-on-surface-variant">
-                          Spot Index or Nearest Futures
+                      <td className="py-3.5 px-4">
+                        <span className="px-2 py-0.5 rounded bg-[#F8FAFC] border border-[#E5EAF1] text-[#667085]">
+                          NIFTY 50 Index (Price Return)
                         </span>
                       </td>
-                      <td className="py-space-md px-space-md">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-DEFAULT bg-surface-container-highest text-on-surface font-semibold">
-                          <span className="material-symbols-outlined text-[13px] text-tertiary">done</span>
-                          NSE NIFTY 50 TRI (Total Return)
+                      <td className="py-3.5 px-4">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#E8F1FD] text-[#2879F2] font-semibold">
+                          ✓ NSE NIFTY 50 (2018–2025)
                         </span>
                       </td>
-                      <td className="py-space-md px-space-lg text-right font-label-numeric text-label-numeric text-on-surface">
-                        Includes dividend adjustments
+                      <td className="py-3.5 px-5 text-right text-[#667085]">
+                        Daily closing price series ({experiment.totalTradingSessions || 1849} sessions)
                       </td>
                     </tr>
                   </tbody>
@@ -545,42 +536,51 @@ def test_nifty_mean_reversion(df: pd.DataFrame) -> dict:
           </div>
         )}
 
-        {/* Tab 2: Statistical Breakdown */}
+        {/* Tab 2: Detailed Numbers */}
         {activeTab === 'stats' && (
-          <div className="bg-surface-container-lowest p-space-xl rounded-DEFAULT shadow-xs border border-outline-variant/30 space-y-space-lg">
-            <h2 className="font-headline-sm text-headline-sm text-on-surface font-semibold">
-              Statistical Moments &amp; Significance Parameters
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-space-md font-body-sm">
-              <div className="p-space-md bg-surface-container-low rounded-DEFAULT border border-outline-variant/20 space-y-1">
-                <span className="font-label-caps text-label-caps text-outline uppercase font-semibold">Mean (μ)</span>
-                <div className="font-label-numeric text-headline-sm text-on-surface font-semibold">+{results.averageGrossReturn}%</div>
-                <p className="text-on-surface-variant text-body-sm">Arithmetic average of 5-day post-shock return series.</p>
+          <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-[#E5EAF1] space-y-6">
+            <div>
+              <h2 className="text-xl font-bold text-[#111111]">
+                Detailed Statistical Summary
+              </h2>
+              <p className="text-xs text-[#667085] mt-1">
+                Mathematical indicators measuring consistency, spread, and sample reliability of post-drop returns.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              <div className="p-4 bg-[#F8FAFC] rounded-xl border border-[#E5EAF1] space-y-1.5">
+                <span className="text-[11px] font-semibold text-[#667085] uppercase">Average Gross Return (μ)</span>
+                <div className="text-2xl font-bold text-[#111111]">+{results.averageGrossReturn}%</div>
+                <p className="text-[#667085]">Arithmetic average of {experiment.holdingDays || 5}-day returns before costs.</p>
               </div>
-              <div className="p-space-md bg-surface-container-low rounded-DEFAULT border border-outline-variant/20 space-y-1">
-                <span className="font-label-caps text-label-caps text-outline uppercase font-semibold">Median (P50)</span>
-                <div className="font-label-numeric text-headline-sm text-on-surface font-semibold">+{results.medianReturn}%</div>
-                <p className="text-on-surface-variant text-body-sm">Robust central tendency mitigating extreme rally outliers.</p>
+              <div className="p-4 bg-[#F8FAFC] rounded-xl border border-[#E5EAF1] space-y-1.5">
+                <span className="text-[11px] font-semibold text-[#667085] uppercase">Median Return (P50)</span>
+                <div className="text-2xl font-bold text-[#111111]">+{results.medianReturn}%</div>
+                <p className="text-[#667085]">The midpoint return — half the trades performed better, half performed worse.</p>
               </div>
-              <div className="p-space-md bg-surface-container-low rounded-DEFAULT border border-outline-variant/20 space-y-1">
-                <span className="font-label-caps text-label-caps text-outline uppercase font-semibold">Standard Deviation (σ)</span>
-                <div className="font-label-numeric text-headline-sm text-on-surface font-semibold">{results.standardDeviation}%</div>
-                <p className="text-on-surface-variant text-body-sm">Cross-event volatility of forward 5-session performance.</p>
+              <div className="p-4 bg-[#F8FAFC] rounded-xl border border-[#E5EAF1] space-y-1.5">
+                <span className="text-[11px] font-semibold text-[#667085] uppercase">Spread / Volatility (σ)</span>
+                <div className="text-2xl font-bold text-[#111111]">{results.standardDeviation}%</div>
+                <p className="text-[#667085]">Standard deviation showing how much individual trades diverged from the mean.</p>
               </div>
-              <div className="p-space-md bg-surface-container-low rounded-DEFAULT border border-outline-variant/20 space-y-1">
-                <span className="font-label-caps text-label-caps text-outline uppercase font-semibold">Skewness</span>
-                <div className="font-label-numeric text-headline-sm text-on-surface font-semibold">+{results.skewness}</div>
-                <p className="text-on-surface-variant text-body-sm">Positive right tail: large upside rebounds out-magnitude down continuations.</p>
+              <div className="p-4 bg-[#F8FAFC] rounded-xl border border-[#E5EAF1] space-y-1.5">
+                <span className="text-[11px] font-semibold text-[#667085] uppercase">Distribution Skew</span>
+                <div className="text-2xl font-bold text-[#111111]">+{results.skewness}</div>
+                <p className="text-[#667085]">Positive skew: a small number of outsized rallies pulled the arithmetic average upward.</p>
               </div>
-              <div className="p-space-md bg-surface-container-low rounded-DEFAULT border border-outline-variant/20 space-y-1">
-                <span className="font-label-caps text-label-caps text-outline uppercase font-semibold">Kurtosis</span>
-                <div className="font-label-numeric text-headline-sm text-on-surface font-semibold">{results.kurtosis}</div>
-                <p className="text-on-surface-variant text-body-sm">Leptokurtic fat-tail distribution typical of liquidation clusters.</p>
+              <div className="p-4 bg-[#F8FAFC] rounded-xl border border-[#E5EAF1] space-y-1.5">
+                <span className="text-[11px] font-semibold text-[#667085] uppercase">Fat-Tail Risk (Kurtosis)</span>
+                <div className="text-2xl font-bold text-[#111111]">{results.kurtosis}</div>
+                <p className="text-[#667085]">Kurtosis indicates that extreme tail moves occurred more often than in a normal distribution.</p>
               </div>
-              <div className="p-space-md bg-surface-container-low rounded-DEFAULT border border-outline-variant/20 space-y-1">
-                <span className="font-label-caps text-label-caps text-outline uppercase font-semibold">Student's t-Stat</span>
-                <div className="font-label-numeric text-headline-sm text-on-surface font-semibold">{results.tStatistic} (p={results.pValue})</div>
-                <p className="text-on-surface-variant text-body-sm">Moderate rejection of null hypothesis μ ≤ 0 at 95% confidence level.</p>
+              <div className="p-4 bg-[#F8FAFC] rounded-xl border border-[#E5EAF1] space-y-1.5">
+                <span className="text-[11px] font-semibold text-[#667085] uppercase">Statistical Test (t-Stat &amp; p-Val)</span>
+                <div className="text-2xl font-bold text-[#111111]">t = {results.tStatistic} (p = {results.pValue})</div>
+                <p className="text-[#667085]">
+                  {Number(results.pValue) < 0.05
+                    ? 'Statistically significant at the 5% level.'
+                    : `With p = ${results.pValue}, the result is not statistically significant at the 5% level.`}
+                </p>
               </div>
             </div>
           </div>
@@ -588,55 +588,55 @@ def test_nifty_mean_reversion(df: pd.DataFrame) -> dict:
 
         {/* Tab 3: Market Regimes */}
         {activeTab === 'regimes' && (
-          <div className="bg-surface-container-lowest p-space-xl rounded-DEFAULT shadow-xs border border-outline-variant/30 space-y-space-md">
-            <div className="flex items-center justify-between pb-space-xs border-b border-surface-container">
-              <h2 className="font-headline-sm text-headline-sm text-on-surface font-semibold">
-                Market Regime Conditioning Breakdown
-              </h2>
-              <span className="font-label-caps text-label-caps bg-error-container text-on-error-container px-2 py-0.5 rounded-DEFAULT font-bold">
-                REGIME RISK DETECTED
+          <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-[#E5EAF1] space-y-6">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E5EAF1]">
+              <div>
+                <h2 className="text-xl font-bold text-[#111111]">
+                  Market Environment: Above vs Below 200-Day Moving Average
+                </h2>
+                <p className="text-xs text-[#667085] mt-1">
+                  We partitioned the {results.sampleSize.toLocaleString()} qualifying events based on whether the index was above or below its 200-day simple moving average at entry.
+                </p>
+              </div>
+              <span className="text-xs font-bold text-[#FF4A2D] bg-[#FEECE9] px-3 py-1 rounded-full shrink-0">
+                CRITICAL REGIME SPLIT
               </span>
             </div>
-            <p className="font-body-md text-body-md text-on-surface-variant">
-              When we partition the {results.sampleSize.toLocaleString()} qualifying observations by macroeconomic trend regime (above vs below 200-day moving average), the statistical edge demonstrates sharp divergence:
-            </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-space-md pt-space-xs">
-              <div className="p-space-md bg-surface-container-low rounded-DEFAULT border border-outline-variant/20 space-y-space-xs">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-5 bg-[#F0FDF4] rounded-xl border border-[#08B878]/30 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="font-label-caps text-label-caps text-on-tertiary-container font-semibold uppercase">
-                    Bull Regime ({experiment.market} &gt; 200 DMA)
+                  <span className="text-xs font-bold text-[#08B878] uppercase">
+                    Bull Market ({experiment.market} &gt; 200 DMA)
                   </span>
-                  <span className="font-label-code text-label-code text-on-surface-variant">
+                  <span className="text-xs text-[#667085] font-mono">
                     N = {results.regimes ? results.regimes.bull.observations.toLocaleString() : '0'} ({results.regimes ? results.regimes.bull.percentage : 0}%)
                   </span>
                 </div>
-                <div className="font-label-numeric text-headline-sm text-on-tertiary-container font-semibold">
+                <div className="text-2xl font-bold text-[#08B878]">
                   {results.regimes && results.regimes.bull.averageNetReturn >= 0 ? '+' : ''}
-                  {results.regimes ? results.regimes.bull.averageNetReturn.toFixed(2) : '0.00'}% Net Return (Win Rate: {results.regimes ? results.regimes.bull.winRate.toFixed(1) : '0.0'}%)
+                  {results.regimes ? results.regimes.bull.averageNetReturn.toFixed(2) : '0.00'}% Net Return
                 </div>
-                <p className="text-body-sm text-on-surface-variant">
-                  In structural bull markets (closing price above the trailing 200-day SMA on signal date), pullbacks trigger institutional dip-buying and liquidity replenishment.
+                <p className="text-xs text-[#667085] leading-relaxed">
+                  Win rate: <strong className="text-[#111111]">{results.regimes ? results.regimes.bull.winRate.toFixed(1) : '0.0'}%</strong>. In overall uptrends, sharp one-day declines often attract dip-buyers, resulting in dependable mean-reversion bounces.
                 </p>
               </div>
 
-              <div className="p-space-md bg-surface-container-low rounded-DEFAULT border border-outline-variant/20 space-y-space-xs">
+              <div className="p-5 bg-[#FEF2F2] rounded-xl border border-[#FF4A2D]/30 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="font-label-caps text-label-caps text-error font-semibold uppercase">
-                    Bear Regime ({experiment.market} &le; 200 DMA)
+                  <span className="text-xs font-bold text-[#FF4A2D] uppercase">
+                    Bear Market ({experiment.market} &le; 200 DMA)
                   </span>
-                  <span className="font-label-code text-label-code text-on-surface-variant">
+                  <span className="text-xs text-[#667085] font-mono">
                     N = {results.regimes ? results.regimes.bear.observations.toLocaleString() : '0'} ({results.regimes ? results.regimes.bear.percentage : 0}%)
                   </span>
                 </div>
-                <div className={`font-label-numeric text-headline-sm font-semibold ${
-                  (results.regimes?.bear.averageNetReturn ?? 0) >= 0 ? 'text-on-tertiary-container' : 'text-error'
-                }`}>
+                <div className="text-2xl font-bold text-[#FF4A2D]">
                   {results.regimes && results.regimes.bear.averageNetReturn >= 0 ? '+' : ''}
-                  {results.regimes ? results.regimes.bear.averageNetReturn.toFixed(2) : '0.00'}% Net Return (Win Rate: {results.regimes ? results.regimes.bear.winRate.toFixed(1) : '0.0'}%)
+                  {results.regimes ? results.regimes.bear.averageNetReturn.toFixed(2) : '0.00'}% Net Return
                 </div>
-                <p className="text-body-sm text-on-surface-variant">
-                  In bear regimes (closing price at or below trailing 200-day SMA on signal date), single-session drops frequently exhibit heightened downside volatility and trend acceleration.
+                <p className="text-xs text-[#667085] leading-relaxed">
+                  Win rate: <strong className="text-[#111111]">{results.regimes ? results.regimes.bear.winRate.toFixed(1) : '0.0'}%</strong>. In ongoing downtrends, sharp declines frequently cascade into further selling rather than immediate rebounds.
                 </p>
               </div>
             </div>
@@ -645,52 +645,73 @@ def test_nifty_mean_reversion(df: pd.DataFrame) -> dict:
 
         {/* Tab 4: Limitations & Risks */}
         {activeTab === 'limitations' && (
-          <div className="bg-surface-container-lowest p-space-xl rounded-DEFAULT shadow-xs border border-outline-variant/30 space-y-space-md">
-            <h2 className="font-headline-sm text-headline-sm text-on-surface font-semibold">
-              Empirical Research Limitations
-            </h2>
-            <div className="space-y-space-sm font-body-sm">
+          <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-[#E5EAF1] space-y-6">
+            <div>
+              <h2 className="text-xl font-bold text-[#111111]">
+                Important Research Limitations
+              </h2>
+              <p className="text-xs text-[#667085] mt-1">
+                Transparency matters. Here are the core constraints and analytical boundaries of this study:
+              </p>
+            </div>
+            <div className="space-y-3 text-xs">
               {experiment.limitations.map((lim, idx) => (
                 <div
                   key={idx}
-                  className="p-space-md bg-surface-container-low rounded-DEFAULT border border-outline-variant/20 flex items-start gap-space-sm"
+                  className="p-4 bg-[#F8FAFC] rounded-xl border border-[#E5EAF1] flex items-start gap-3"
                 >
-                  <span className="w-5 h-5 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-label-numeric text-label-numeric font-bold shrink-0">
+                  <span className="w-5 h-5 rounded-full bg-white border border-[#E5EAF1] text-[#111111] flex items-center justify-center font-bold text-xs shrink-0">
                     {idx + 1}
                   </span>
-                  <p className="text-on-surface">{lim}</p>
+                  <p className="text-[#111111] leading-relaxed font-medium">{lim}</p>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* Tab 5: Code / SQL Recipe */}
+        {/* Tab 5: Code / Python Recipe */}
         {activeTab === 'code' && (
-          <div className="bg-surface-container-lowest p-space-xl rounded-DEFAULT shadow-xs border border-outline-variant/30 space-y-space-md">
+          <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-[#E5EAF1] space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="font-headline-sm text-headline-sm text-on-surface font-semibold">
-                  Reproducible Experiment Code Recipe
+                <h2 className="text-xl font-bold text-[#111111]">
+                  Reproduce This Test in Python
                 </h2>
-                <p className="font-body-sm text-body-sm text-on-surface-variant">
-                  Executable Python script implementing the exact vector logic, entry timing, and friction drag.
+                <p className="text-xs text-[#667085] mt-1">
+                  Self-contained Python code you can run locally to verify these exact calculations.
                 </p>
               </div>
               <button
                 onClick={handleCopyCode}
-                className="px-space-md py-1 bg-surface-container text-on-surface font-label-code text-[11px] rounded-DEFAULT hover:bg-surface-container-high transition-colors flex items-center gap-1 cursor-pointer"
+                className="px-4 py-2 bg-[#111111] text-white hover:bg-black text-xs font-semibold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
               >
-                <span className="material-symbols-outlined text-[14px]">content_copy</span>
-                <span>{copiedCode ? 'Copied Code!' : 'Copy Python'}</span>
+                <span>{copiedCode ? '✓ Copied' : 'Copy Python'}</span>
               </button>
             </div>
 
-            <pre className="p-space-md bg-surface-container-low rounded-DEFAULT font-label-code text-label-code text-on-surface overflow-x-auto border border-outline-variant/20 leading-relaxed">
+            <pre className="p-4 bg-[#F8FAFC] rounded-xl font-mono text-xs text-[#111111] overflow-x-auto border border-[#E5EAF1] leading-relaxed">
               <code>{pythonRecipe}</code>
             </pre>
           </div>
         )}
+
+        {/* Footer Navigation */}
+        <div className="flex justify-between items-center pt-2">
+          <button
+            onClick={() => goToPhase('learn')}
+            className="px-5 py-2.5 rounded-xl text-xs font-semibold text-[#667085] hover:text-[#111111] bg-white border border-[#E5EAF1] hover:bg-[#F8FAFC] transition-colors cursor-pointer"
+          >
+            ← Back to Learn
+          </button>
+          <button
+            onClick={() => goToPhase('ask')}
+            className="px-6 py-2.5 rounded-xl text-xs font-semibold bg-[#111111] text-white hover:bg-black transition-all flex items-center gap-2 shadow-sm cursor-pointer"
+          >
+            <span>Start New Investigation</span>
+            <span className="text-sm">→</span>
+          </button>
+        </div>
       </div>
     </div>
   );

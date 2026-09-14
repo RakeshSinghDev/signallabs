@@ -114,7 +114,7 @@ export interface ExperimentRunResponse {
   maxAdverseExcursion?: number;
   sharpeRatio?: number;
   distributionBins: DistributionBin[];
-  evidenceLevel: 'Moderate Evidence' | 'Weak Evidence';
+  evidenceLevel: string;
   conclusion: string;
 }
 

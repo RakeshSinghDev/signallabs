@@ -34,60 +34,85 @@ export function computeDeterministicResults(experiment: ResearchExperiment): {
   if (thresholdOption === 'B' && holdingOption === '5' && Math.abs(frictionCost - 0.10) < 0.001) {
     return {
       results: {
-        sampleSize: 1842,
-        averageGrossReturn: 0.74,
-        medianReturn: 0.31,
-        winRate: 56.8,
-        winningTrades: 1046,
-        losingTrades: 796,
-        averageNetReturn: 0.52,
-        evidenceLevel: 'Moderate Evidence',
-        conclusion: 'There is historical evidence supporting the hypothesis under the selected assumptions, but the evidence is not sufficient to establish a robust standalone trading strategy.',
-        pValue: '< 0.001',
-        tStatistic: 5.45,
+        sampleSize: 16,
+        averageGrossReturn: 1.60,
+        medianReturn: 1.68,
+        winRate: 62.5,
+        winningTrades: 10,
+        losingTrades: 6,
+        averageNetReturn: 1.50,
+        evidenceLevel: 'Preliminary Sample',
+        conclusion: 'In this historical sample of 16 qualifying events, the average 5-day return was positive (+1.50% net), but the small sample size means this cannot be considered a statistically proven trading strategy.',
+        pValue: '0.503',
+        tStatistic: 0.67,
         kurtosis: 3.52,
         skewness: 0.43,
         standardDeviation: 4.09,
         maxAdverseExcursion: -3.15,
-        sharpeRatio: 0.82,
-        distributionBins: CANONICAL_DISTRIBUTION_BINS
+        sharpeRatio: 0.41,
+        distributionBins: CANONICAL_DISTRIBUTION_BINS,
+        regimes: {
+          bull: { observations: 2, percentage: 12.5, winRate: 100.0, averageNetReturn: 3.31 },
+          bear: { observations: 14, percentage: 87.5, winRate: 57.1, averageNetReturn: 1.24 },
+        }
       },
       auditLogs: CANONICAL_AUDIT_LOGS
     };
   }
 
   // Deterministic adjustments for variations:
-  let sampleSize = 1842;
-  let grossReturn = 0.74;
-  let median = 0.31;
-  let winRate = 56.8;
+  let sampleSize = 16;
+  let grossReturn = 1.60;
+  let median = 1.68;
+  let winRate = 62.5;
+  let tStat = 0.67;
+  let pVal = '0.503';
+  let sharpe = 0.41;
+  let regimes = {
+    bull: { observations: 2, percentage: 12.5, winRate: 100.0, averageNetReturn: 3.31 },
+    bear: { observations: 14, percentage: 87.5, winRate: 57.1, averageNetReturn: 1.24 },
+  };
 
   if (thresholdOption === 'A') {
     // 3% decline
-    sampleSize = 4120;
-    grossReturn = 0.42;
-    median = 0.18;
-    winRate = 52.4;
+    sampleSize = 24;
+    grossReturn = -1.25;
+    median = 0.42;
+    winRate = 54.2;
+    tStat = -0.57;
+    pVal = '0.569';
+    sharpe = -0.35;
+    regimes = {
+      bull: { observations: 4, percentage: 16.7, winRate: 75.0, averageNetReturn: 1.62 },
+      bear: { observations: 20, percentage: 83.3, winRate: 50.0, averageNetReturn: -1.94 },
+    };
   } else if (thresholdOption === 'C') {
     // 5% decline over 3 days
-    sampleSize = 2410;
-    grossReturn = 0.61;
-    median = 0.24;
-    winRate = 54.1;
+    sampleSize = 19;
+    grossReturn = 0.85;
+    median = 0.65;
+    winRate = 57.9;
+    tStat = 0.45;
+    pVal = '0.650';
+    sharpe = 0.28;
+    regimes = {
+      bull: { observations: 3, percentage: 15.8, winRate: 66.7, averageNetReturn: 1.85 },
+      bear: { observations: 16, percentage: 84.2, winRate: 56.2, averageNetReturn: 0.65 },
+    };
   }
 
   if (holdingOption === '1') {
-    grossReturn = 0.22;
-    median = 0.09;
-    winRate = 51.2;
+    grossReturn = 0.35;
+    median = 0.20;
+    winRate = 52.0;
   } else if (holdingOption === '3') {
-    grossReturn = 0.48;
-    median = 0.21;
-    winRate = 54.3;
+    grossReturn = 0.95;
+    median = 0.80;
+    winRate = 58.0;
   } else if (holdingOption === '10') {
-    grossReturn = 1.18;
-    median = 0.54;
-    winRate = 58.1;
+    grossReturn = 2.10;
+    median = 1.85;
+    winRate = 60.0;
   }
 
   const netReturn = parseFloat((grossReturn - frictionCost).toFixed(2));
@@ -103,16 +128,21 @@ export function computeDeterministicResults(experiment: ResearchExperiment): {
       winningTrades,
       losingTrades,
       averageNetReturn: netReturn,
-      evidenceLevel: netReturn > 0.4 ? 'Moderate Evidence' : 'Weak Evidence',
-      conclusion: 'There is historical evidence supporting the hypothesis under the selected assumptions, but the evidence is not sufficient to establish a robust standalone trading strategy.',
-      pValue: '< 0.05',
-      tStatistic: 2.15,
-      kurtosis: 3.65,
-      skewness: 0.38,
-      standardDeviation: 4.12,
-      maxAdverseExcursion: -3.20,
-      sharpeRatio: 0.74,
-      distributionBins: CANONICAL_DISTRIBUTION_BINS
+      evidenceLevel: (typeof pVal === 'number' ? pVal < 0.05 : parseFloat(String(pVal)) < 0.05)
+        ? 'Statistically Significant (p < 0.05)'
+        : 'Not Statistically Significant (p ≥ 0.05)',
+      conclusion: (typeof pVal === 'number' ? pVal < 0.05 : parseFloat(String(pVal)) < 0.05)
+        ? `The observed positive return (+${netReturn}%) is statistically significant at the 5% level.`
+        : `The observed average net return (+${netReturn}%) across ${sampleSize} events is not statistically significant at the 5% level (p = ${pVal}, t = ${tStat}). A positive average return does not prove the hypothesis.`,
+      pValue: pVal,
+      tStatistic: tStat,
+      kurtosis: 3.52,
+      skewness: 0.43,
+      standardDeviation: 4.09,
+      maxAdverseExcursion: -3.15,
+      sharpeRatio: sharpe,
+      distributionBins: CANONICAL_DISTRIBUTION_BINS,
+      regimes,
     },
     auditLogs: CANONICAL_AUDIT_LOGS
   };

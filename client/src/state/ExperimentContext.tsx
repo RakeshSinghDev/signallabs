@@ -37,6 +37,18 @@ export const ExperimentProvider: React.FC<{ children: ReactNode }> = ({ children
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
+        // Cleanse any legacy stale 1842 cache
+        if (parsed.results?.sampleSize === 1842) {
+          parsed.results = INITIAL_CANONICAL_EXPERIMENT.results;
+        }
+        if (parsed.totalTradingSessions === 1748) {
+          parsed.totalTradingSessions = 1849;
+        }
+        if (parsed.originalQuestion === 'Post-budget volatility compression and index mean reversion') {
+          parsed.originalQuestion = INITIAL_CANONICAL_EXPERIMENT.originalQuestion;
+          parsed.question = INITIAL_CANONICAL_EXPERIMENT.originalQuestion;
+          parsed.title = INITIAL_CANONICAL_EXPERIMENT.title;
+        }
         return {
           ...INITIAL_CANONICAL_EXPERIMENT,
           ...parsed,
@@ -44,6 +56,7 @@ export const ExperimentProvider: React.FC<{ children: ReactNode }> = ({ children
           entryTiming: parsed.entryTiming || INITIAL_CANONICAL_EXPERIMENT.entryTiming,
           holdingDays: parsed.holdingDays || INITIAL_CANONICAL_EXPERIMENT.holdingDays,
           transactionCost: parsed.transactionCost !== undefined ? parsed.transactionCost : INITIAL_CANONICAL_EXPERIMENT.transactionCost,
+          totalTradingSessions: 1849,
         };
       } catch (e) {
         console.error('Failed to parse stored experiment', e);
@@ -54,8 +67,8 @@ export const ExperimentProvider: React.FC<{ children: ReactNode }> = ({ children
 
   const [executionSimulation, setExecutionSimulation] = useState<ExecutionSimulationState>({
     progressPct: 100,
-    processedEvents: 1842,
-    totalEvents: 1842,
+    processedEvents: 16,
+    totalEvents: 16,
     isComplete: true,
     statusText: 'Execution Completed',
     checks: {
@@ -85,6 +98,7 @@ export const ExperimentProvider: React.FC<{ children: ReactNode }> = ({ children
       ...prev,
       originalQuestion: newQuestion,
       question: newQuestion,
+      title: newQuestion,
     }));
   }, []);
 
@@ -262,7 +276,7 @@ export const ExperimentProvider: React.FC<{ children: ReactNode }> = ({ children
     setExecutionSimulation({
       progressPct: 15,
       processedEvents: 0,
-      totalEvents: experiment.results.sampleSize || 1842,
+      totalEvents: experiment.results.sampleSize || 16,
       isComplete: false,
       isLoading: true,
       error: null,
