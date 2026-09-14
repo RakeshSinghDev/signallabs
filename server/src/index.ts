@@ -4,26 +4,39 @@ import experimentRoutes from './routes/experimentRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
-const CLIENT_ORIGINS = process.env.CLIENT_ORIGIN
-  ? [process.env.CLIENT_ORIGIN]
-  : ['http://localhost:3000', 'http://localhost:5173'];
+const DEFAULT_ORIGINS = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'https://client-kappa-one-50.vercel.app',
+];
 
-// Configure CORS for local development
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
-      if (!origin || CLIENT_ORIGINS.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error(`Origin ${origin} not allowed by CORS`));
-      }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  })
-);
+const envOrigins = [process.env.CLIENT_URL, process.env.CLIENT_ORIGIN]
+  .filter((val): val is string => Boolean(val))
+  .flatMap((val) => val.split(',').map((origin) => origin.trim().replace(/\/+$/, '')))
+  .filter(Boolean);
+
+const CLIENT_ORIGINS = Array.from(new Set([...DEFAULT_ORIGINS, ...envOrigins]));
+
+// Configure CORS for local development and production
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
+    if (!origin) {
+      return callback(null, true);
+    }
+    const normalizedOrigin = origin.replace(/\/+$/, '');
+    if (CLIENT_ORIGINS.includes(normalizedOrigin)) {
+      return callback(null, true);
+    }
+    callback(new Error(`Origin ${origin} not allowed by CORS`));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
